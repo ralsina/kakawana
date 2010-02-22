@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Feb 22 09:30:37 2010
+# Created: Mon Feb 22 09:37:26 2010
 #      by: PyQt4 UI code generator 4.7
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,6 +47,21 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap(":/icons/previous.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionPrevious.setIcon(icon1)
         self.actionPrevious.setObjectName("actionPrevious")
+        self.actionNew_Feed = QtGui.QAction(MainWindow)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/filenew.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionNew_Feed.setIcon(icon2)
+        self.actionNew_Feed.setObjectName("actionNew_Feed")
+        self.actionDelete_Feed = QtGui.QAction(MainWindow)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/close.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionDelete_Feed.setIcon(icon3)
+        self.actionDelete_Feed.setObjectName("actionDelete_Feed")
+        self.toolBar.addAction(self.actionNew_Feed)
+        self.toolBar.addAction(self.actionDelete_Feed)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionPrevious)
+        self.toolBar.addAction(self.actionNext)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -56,8 +71,11 @@ class Ui_MainWindow(object):
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNext.setText(QtGui.QApplication.translate("MainWindow", "Next", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPrevious.setText(QtGui.QApplication.translate("MainWindow", "Previous", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew_Feed.setText(QtGui.QApplication.translate("MainWindow", "New Feed", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDelete_Feed.setText(QtGui.QApplication.translate("MainWindow", "Delete Feed", None, QtGui.QApplication.UnicodeUTF8))
 
 from PyQt4 import QtWebKit
+import icons_rc
 
 if __name__ == "__main__":
     import sys
