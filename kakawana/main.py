@@ -58,7 +58,8 @@ class Main(QtGui.QMainWindow):
         feed=feeds[items.index(unicode(item))]
 
         # Add it to the DB
-        f=Feed(
+        f=Feed(name = feed['feed']['title'], 
+               url = url
 
 def main():
     # Init the database before doing anything else
