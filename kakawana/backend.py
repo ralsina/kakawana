@@ -33,7 +33,7 @@ class Feed(Entity):
     '''The URL for the RSS/Atom feed'''
     lastUpdate = Field(DateTime,default=None,required=False)
     '''Last time this feed was downloaded'''
-    
+    data=Field(Unicode,required=True)
     
     def __repr__(self):
         return "Feed: "+self.url
