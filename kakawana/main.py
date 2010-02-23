@@ -36,6 +36,9 @@ class Main(QtGui.QMainWindow):
 
     def on_actionNew_Feed_triggered(self, b=None):
         '''Ask for site or feed URL and add it to backend'''
+        
+        # FIXME: this is silly slow and blocking.
+        
         if b is not None: return
         url,r=QtGui.QInputDialog.getText(self, 
             "Kakawana - New feed", 
@@ -70,8 +73,21 @@ class Main(QtGui.QMainWindow):
                        xmlurl = unicode(feed['href']),
                        data = unicode(pickle.dumps(feed['feed'])))
         f.save()
+        self.addPosts(feed)
         backend.saveData()
         self.loadFeeds()
+
+    def addPosts(self, feed):
+        '''Takes an already parsed feed'''
+        for post in feed['entries']:
+            p=backend.Post.update_or_create( dict(
+                title=post.title,
+                url=post.link,
+                _id=post.id,
+                data=pickle.dumps(post)),
+                surrogate=False
+                )
+        backend.saveData()
 
 def main():
     # Init the database before doing anything else
