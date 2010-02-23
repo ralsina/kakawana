@@ -31,9 +31,8 @@ class Feed(Entity):
     '''The URL of the comic's website'''
     xmlurl = Field(Unicode,required=True)
     '''The URL for the RSS/Atom feed'''
-    lastUpdate = Field(DateTime,default=None,required=False)
-    '''Last time this feed was downloaded'''
     data=Field(Unicode,required=True)
+    '''everything in the feed'''
     
     def __repr__(self):
         return "Feed: "+self.url
