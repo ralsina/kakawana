@@ -48,6 +48,8 @@ class Post(Entity):
     title = Field(Unicode, required=True)
     url = Field(Unicode, required=True)
     read = Field(Boolean, default=False)
+    data=Field(Unicode,required=True)
+    '''everything in the feed'''
 
 class Tag(Entity):
     """
