@@ -50,6 +50,8 @@ class Post(Entity):
     read = Field(Boolean, default=False)
     star = Field(Boolean, default=False)
     data=Field(Unicode,required=True)
+    _id=Field(Unicode,required=True, primary_key=True)
+    feed=ManyToOne("Feed")
     '''everything in the feed'''
 
 class Tag(Entity):
