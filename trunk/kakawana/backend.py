@@ -42,7 +42,12 @@ class Feed(Entity):
     # just by printing them. Here, our groceries task would 
     # print as "Task: Buy groceries".
     
-# Since earlier I mentioned Tags, we need to define them too:
+
+class Post(Entity):
+    using_options(tablename='posts')
+    title = Field(Unicode, required=True)
+    url = Field(Unicode, required=True)
+    read = Field(Boolean, default=False)
 
 class Tag(Entity):
     """
@@ -53,7 +58,7 @@ class Tag(Entity):
     using_options(tablename='tags')
     name = Field(Unicode,required=True)
     feeds = ManyToMany("Feed")
-    #posts = ManyToMany("Post")
+    posts = ManyToMany("Post")
     
     def __repr__(self):
         return "Tag: "+self.name
