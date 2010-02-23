@@ -68,13 +68,14 @@ class Main(QtGui.QMainWindow):
         feed=feeds[items.index(unicode(item))]
 
         # Add it to the DB
-        f=backend.Feed(name = unicode(feed['feed']['title']), 
+        f=backend.Feed.update_or_create(dict (
+                       name = unicode(feed['feed']['title']), 
                        url = unicode(feed['feed']['link']),
                        xmlurl = unicode(feed['href']),
-                       data = unicode(pickle.dumps(feed['feed'])))
-        f.save()
-        self.addPosts(feed)
+                       data = unicode(pickle.dumps(feed['feed']))),
+                       surrogate = True)
         backend.saveData()
+        self.addPosts(feed)
         self.loadFeeds()
 
     def addPosts(self, feed):
@@ -87,7 +88,7 @@ class Main(QtGui.QMainWindow):
                 data=pickle.dumps(post)),
                 surrogate=False
                 )
-        backend.saveData()
+            backend.saveData()
 
 def main():
     # Init the database before doing anything else

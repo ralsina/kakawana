@@ -29,7 +29,7 @@ class Feed(Entity):
     '''The name of the comic'''
     url = Field(Unicode,required=True)
     '''The URL of the comic's website'''
-    xmlurl = Field(Unicode,required=True)
+    xmlurl = Field(Unicode,required=True, primary_key=True)
     '''The URL for the RSS/Atom feed'''
     data=Field(Unicode,required=True)
     '''everything in the feed'''
