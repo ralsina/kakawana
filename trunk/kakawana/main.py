@@ -26,6 +26,13 @@ class Main(QtGui.QMainWindow):
         # This is always the same
         self.ui=MainWindow()
         self.ui.setupUi(self)
+        self.loadFeeds()
+
+    def loadFeeds(self):
+        feeds=backend.Feed.query.all()
+        self.ui.feeds.clear()
+        for feed in feeds:
+            self.ui.feeds.addItem(feed.name)
 
     def on_actionNew_Feed_triggered(self, b=None):
         '''Ask for site or feed URL and add it to backend'''
@@ -58,8 +65,13 @@ class Main(QtGui.QMainWindow):
         feed=feeds[items.index(unicode(item))]
 
         # Add it to the DB
-        f=Feed(name = feed['feed']['title'], 
-               url = url
+        f=backend.Feed(name = unicode(feed['feed']['title']), 
+                       url = unicode(feed['feed']['link']),
+                       xmlurl = unicode(feed['href']),
+                       data = unicode(pickle.dumps(feed['feed'])))
+        f.save()
+        backend.saveData()
+        self.loadFeeds()
 
 def main():
     # Init the database before doing anything else
