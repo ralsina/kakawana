@@ -2,7 +2,7 @@
 
 """The user interface for our app"""
 
-import os,sys
+import os, sys, hashlib
 from pprint import pprint
 
 # Import Qt modules
@@ -24,7 +24,7 @@ VERSION="0.0.1"
 class Main(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
-        
+        self.fast_mode = False
         # This is always the same
         self.ui=MainWindow()
         self.ui.setupUi(self)
@@ -51,7 +51,15 @@ class Main(QtGui.QMainWindow):
         fitem = item.parent()
         if fitem: # Post
             p=backend.Post.get_by(_id=item._id)
-            self.ui.html.load(QtCore.QUrl(p.url))
+            if not self.fast_mode: #Slow mode
+                self.ui.html.load(QtCore.QUrl(p.url))
+            else:
+                fname = os.path.join(backend.dbdir, 'cache',
+                    '%s.jpg'%hashlib.md5(p._id).hexdigest())
+                if os.path.exists(fname):
+                    self.ui.html.setHtml('''<img src="file://%s">'''%fname)
+                else:
+                    self.ui.html.load(QtCore.QUrl(p.url))
             p.read=True
             backend.saveData()
             item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
@@ -105,6 +113,10 @@ class Main(QtGui.QMainWindow):
         backend.saveData()
         f.addPosts(feed=feed)
         self.loadFeeds()
+
+    def on_actionFast_Mode_activated(self, b=None):
+        if b is None: return
+        self.fast_mode = b
 
     def on_actionUpdate_Feed_activated(self, b=None):
         if b is not None: return

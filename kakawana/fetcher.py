@@ -15,7 +15,7 @@ def run():
     for feed in backend.Feed.query.all():
         feed.addPosts()
         for p in feed.posts:
-            if not p.read or 1:
+            if not p.read:
                 fname = os.path.join(cachedir,
                     '%s.jpg'%hashlib.md5(p._id).hexdigest())
                 if not os.path.exists(fname):
