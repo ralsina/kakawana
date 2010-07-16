@@ -33,6 +33,30 @@ class Main(QtGui.QMainWindow):
     def loadFeeds(self):
         feeds=backend.Feed.query.all()
         self.ui.feeds.clear()
+        # Add "all recent"
+        # FIXME: add date field to Post and sort
+        posts =  backend.Post.query.filter(backend.Post.read==False).limit(50)
+        fitem = QtGui.QTreeWidgetItem(['%s (%d)'%("Recent", posts.count())])
+        self.ui.feeds.addTopLevelItem(fitem)
+        for post in posts:
+            pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
+            if post.read:
+                pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+            else:
+                pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
+            pitem._id=post._id
+
+        posts = backend.Post.query.filter(backend.Post.star==True)
+        fitem = QtGui.QTreeWidgetItem(['%s (%d)'%("Starred", posts.count())])
+        self.ui.feeds.addTopLevelItem(fitem)
+        for post in posts:
+            pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
+            if post.read:
+                pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+            else:
+                pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
+            pitem._id=post._id
+        
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
