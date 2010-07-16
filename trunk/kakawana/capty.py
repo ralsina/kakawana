@@ -34,11 +34,19 @@ from PyQt4 import QtCore, QtGui, QtWebKit
 class Capturer(object):
     """A class to capture webpages as images"""
 
-    def __init__(self, url, filename):
+    def __init__(self, url=None, filename=None):
         self.url = url
         self.filename = filename
-        self.saw_initial_layout = False
-        self.saw_document_complete = False
+        self.done = False
+        self.wb = QtWebKit.QWebPage()
+        self.wb.mainFrame().setScrollBarPolicy(
+            QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
+        self.wb.mainFrame().setScrollBarPolicy(
+            QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
+
+        self.wb.loadFinished.connect(self.loadFinishedSlot)
+        self.wb.mainFrame().initialLayoutCompleted.connect(
+            self.initialLayoutSlot)
 
     def loadFinishedSlot(self):
         self.saw_document_complete = True
@@ -50,18 +58,19 @@ class Capturer(object):
         if self.saw_initial_layout and self.saw_document_complete:
             self.doCapture()
 
-    def capture(self):
+    def capture(self, url=None, filename=None):
         """Captures url as an image to the file specified"""
-        self.wb = QtWebKit.QWebPage()
-        self.wb.mainFrame().setScrollBarPolicy(
-            QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
-        self.wb.mainFrame().setScrollBarPolicy(
-            QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
+        if url is not None:
+            self.url = url
+        if filename is not None:
+            self.filename = filename
 
-        self.wb.loadFinished.connect(self.loadFinishedSlot)
-        self.wb.mainFrame().initialLayoutCompleted.connect(
-            self.initialLayoutSlot)
-
+        if url is None or filename is None:
+            return
+        self.saw_initial_layout = False
+        self.saw_document_complete = False
+        self.done = False
+        
         self.wb.mainFrame().load(QtCore.QUrl(self.url))
 
     def doCapture(self):
@@ -71,7 +80,8 @@ class Capturer(object):
         self.wb.mainFrame().render(painter)
         painter.end()
         img.save(self.filename)
-        QtCore.QCoreApplication.instance().quit()
+        self.done=True
+        print "Captured"
 
 if __name__ == "__main__":
     """Run a simple capture"""
