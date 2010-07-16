@@ -34,19 +34,33 @@ class Main(QtGui.QMainWindow):
         feeds=backend.Feed.query.all()
         self.ui.feeds.clear()
         for feed in feeds:
-            fitem=QtGui.QTreeWidgetItem([feed.name])
+            unread_count = len(filter(lambda p: not p.read, feed.posts))
+            fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
             fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
             self.ui.feeds.addTopLevelItem(fitem)
             for post in feed.posts:
                 pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
+                if post.read:
+                    pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+                else:
+                    pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
                 pitem._id=post._id
 
     def on_feeds_itemClicked(self, item=None):
         if item is None: return
-
-        if item.parent(): # Post
+        fitem = item.parent()
+        if fitem: # Post
             p=backend.Post.get_by(_id=item._id)
             self.ui.html.load(QtCore.QUrl(p.url))
+            p.read=True
+            backend.saveData()
+            item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+
+            # Update unread count
+            unread_count = len(filter(lambda p: not p.read, p.feed.posts))
+            fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
+        else: # Feed
+            item.setExpanded(not item.isExpanded())
 
     def on_actionNew_Feed_triggered(self, b=None):
         '''Ask for site or feed URL and add it to backend'''
