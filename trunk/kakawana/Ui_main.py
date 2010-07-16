@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Feb 22 09:37:26 2010
-#      by: PyQt4 UI code generator 4.7
+# Created: Fri Jul 16 12:37:59 2010
+#      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -15,17 +15,22 @@ class Ui_MainWindow(object):
         MainWindow.resize(800, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.splitter = QtGui.QSplitter(self.centralwidget)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setObjectName("splitter")
-        self.feeds = QtGui.QListWidget(self.splitter)
+        self.layoutWidget = QtGui.QWidget(self.centralwidget)
+        self.layoutWidget.setGeometry(QtCore.QRect(0, 10, 1062, 602))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.horizontalLayout = QtGui.QHBoxLayout(self.layoutWidget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.feeds = QtGui.QTreeWidget(self.layoutWidget)
+        self.feeds.setIndentation(0)
+        self.feeds.setRootIsDecorated(False)
         self.feeds.setObjectName("feeds")
-        self.html = QtWebKit.QWebView(self.splitter)
+        self.feeds.headerItem().setText(0, "1")
+        self.feeds.header().setVisible(False)
+        self.horizontalLayout.addWidget(self.feeds)
+        self.html = QtWebKit.QWebView(self.layoutWidget)
         self.html.setUrl(QtCore.QUrl("about:blank"))
         self.html.setObjectName("html")
-        self.verticalLayout.addWidget(self.splitter)
+        self.horizontalLayout.addWidget(self.html)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 24))
@@ -36,7 +41,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.toolBar = QtGui.QToolBar(MainWindow)
         self.toolBar.setObjectName("toolBar")
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        MainWindow.addToolBar(QtCore.Qt.ToolBarArea(QtCore.Qt.TopToolBarArea), self.toolBar)
         self.actionNext = QtGui.QAction(MainWindow)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/next.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -57,11 +62,14 @@ class Ui_MainWindow(object):
         icon3.addPixmap(QtGui.QPixmap(":/icons/close.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDelete_Feed.setIcon(icon3)
         self.actionDelete_Feed.setObjectName("actionDelete_Feed")
+        self.actionUpdate_Feed = QtGui.QAction(MainWindow)
+        self.actionUpdate_Feed.setObjectName("actionUpdate_Feed")
         self.toolBar.addAction(self.actionNew_Feed)
         self.toolBar.addAction(self.actionDelete_Feed)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPrevious)
         self.toolBar.addAction(self.actionNext)
+        self.toolBar.addAction(self.actionUpdate_Feed)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -73,6 +81,7 @@ class Ui_MainWindow(object):
         self.actionPrevious.setText(QtGui.QApplication.translate("MainWindow", "Previous", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew_Feed.setText(QtGui.QApplication.translate("MainWindow", "New Feed", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDelete_Feed.setText(QtGui.QApplication.translate("MainWindow", "Delete Feed", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionUpdate_Feed.setText(QtGui.QApplication.translate("MainWindow", "Update Feed", None, QtGui.QApplication.UnicodeUTF8))
 
 from PyQt4 import QtWebKit
 import icons_rc

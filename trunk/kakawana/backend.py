@@ -4,6 +4,11 @@
 
 import os
 from elixir import *
+import feedparser
+import pickle
+VERSION="0.0.1"
+
+feedparser.USER_AGENT = 'Kakawana/%s +http://kakawana.googlecode.com/'%VERSION
 
 dbdir=os.path.join(os.path.expanduser("~"),".kakawana")
 dbfile=os.path.join(dbdir,"kakawana.sqlite")
@@ -18,7 +23,7 @@ class Feed(Entity):
     """
     
     # By inheriting Entity, we are using Elixir to make this 
-    # class persistent, Task objects can easily be stored in 
+    # class persistent, Feed objects can easily be stored in
     # our database, and you can search for them, change them, 
     # delete them, etc.        
     
@@ -33,17 +38,31 @@ class Feed(Entity):
     '''The URL for the RSS/Atom feed'''
     data=Field(Unicode,required=True)
     '''everything in the feed'''
+    posts=OneToMany("Post")
     
     def __repr__(self):
-        return "Feed: "+self.url
-        
-    # It's always nicer if objects know how to turn themselves 
-    # into strings. That way you can help debug your program 
-    # just by printing them. Here, our groceries task would 
-    # print as "Task: Buy groceries".
-    
+        return "Feed: %s <%s>"%(self.name, self.url)
+
+    def addPosts(self, feed=None):
+        '''Takes an optional already parsed feed'''
+        if feed==None:
+            feed=feedparser.parse(self.xmlurl)
+
+        for post in feed['entries']:
+            print post.title
+            p=Post.update_or_create( dict(
+                title=post.title,
+                url=post.link,
+                _id=post.id,
+                data=pickle.dumps(post)),
+                surrogate=False,
+                )
+            self.posts.insert(0,p)
+            saveData()
 
 class Post(Entity):
+    '''Everything in the feed'''
+    
     using_options(tablename='posts')
     title = Field(Unicode, required=True)
     url = Field(Unicode, required=True)
@@ -52,7 +71,9 @@ class Post(Entity):
     data=Field(Unicode,required=True)
     _id=Field(Unicode,required=True, primary_key=True)
     feed=ManyToOne("Feed")
-    '''everything in the feed'''
+
+    def __repr__(self):
+        return "Post: %s"%self.title
 
 class Tag(Entity):
     """
@@ -70,10 +91,10 @@ class Tag(Entity):
 
 # Using a database involves a few chores. I put them 
 # in the initDB function. Just remember to call it before 
-# trying to use Tasks or Tags!
+# trying to use Tags, Posts, etc.!
 
 def initDB():
-    # Make sure ~/.pyqtodo exists
+    # Make sure ~/.kakawana exists
     if not os.path.isdir(dbdir):
         os.mkdir(dbdir)
     # Set up the Elixir internal thingamajigs

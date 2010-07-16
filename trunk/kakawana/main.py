@@ -18,6 +18,8 @@ import feedfinder
 import feedparser
 import pickle
 
+VERSION="0.0.1"
+
 # Create a class for our main window
 class Main(QtGui.QMainWindow):
     def __init__(self):
@@ -32,7 +34,11 @@ class Main(QtGui.QMainWindow):
         feeds=backend.Feed.query.all()
         self.ui.feeds.clear()
         for feed in feeds:
-            self.ui.feeds.addItem(feed.name)
+            fitem=QtGui.QTreeWidgetItem([feed.name])
+            self.ui.feeds.addTopLevelItem(fitem)
+            for post in feed.posts:
+                pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
+            
 
     def on_actionNew_Feed_triggered(self, b=None):
         '''Ask for site or feed URL and add it to backend'''
@@ -73,22 +79,21 @@ class Main(QtGui.QMainWindow):
                        url = unicode(feed['feed']['link']),
                        xmlurl = unicode(feed['href']),
                        data = unicode(pickle.dumps(feed['feed']))),
-                       surrogate = True)
+                       surrogate = False)
         backend.saveData()
-        self.addPosts(feed)
+        f.addPosts(feed=feed)
         self.loadFeeds()
 
-    def addPosts(self, feed):
-        '''Takes an already parsed feed'''
-        for post in feed['entries']:
-            p=backend.Post.update_or_create( dict(
-                title=post.title,
-                url=post.link,
-                _id=post.id,
-                data=pickle.dumps(post)),
-                surrogate=False
-                )
-            backend.saveData()
+    def on_actionUpdate_Feed_activated(self, b=None):
+        if b is not None: return
+
+        # Launch update of current feed
+        item = self.ui.feeds.currentItem()
+        if not item: return
+
+        f= backend.Feed.get_by(name=unicode(item.text(0)))
+        f.addPosts()
+        
 
 def main():
     # Init the database before doing anything else
