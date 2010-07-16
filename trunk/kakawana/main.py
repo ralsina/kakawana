@@ -35,10 +35,18 @@ class Main(QtGui.QMainWindow):
         self.ui.feeds.clear()
         for feed in feeds:
             fitem=QtGui.QTreeWidgetItem([feed.name])
+            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
             self.ui.feeds.addTopLevelItem(fitem)
             for post in feed.posts:
                 pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
-            
+                pitem._id=post._id
+
+    def on_feeds_itemClicked(self, item=None):
+        if item is None: return
+
+        if item.parent(): # Post
+            p=backend.Post.get_by(_id=item._id)
+            self.ui.html.load(QtCore.QUrl(p.url))
 
     def on_actionNew_Feed_triggered(self, b=None):
         '''Ask for site or feed URL and add it to backend'''
