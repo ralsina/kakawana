@@ -36,7 +36,8 @@ class Main(QtGui.QMainWindow):
         # Add "some recent"
         posts =  backend.Post.query.filter(backend.Post.read==False).\
             order_by("date desc").limit(50)
-        fitem = QtGui.QTreeWidgetItem(['%s (%d)'%("Recent", posts.count())])
+        fitem = QtGui.QTreeWidgetItem(["Recent"])
+        fitem._id = -1
         self.ui.feeds.addTopLevelItem(fitem)
         for post in posts:
             pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
@@ -47,7 +48,8 @@ class Main(QtGui.QMainWindow):
             pitem._id=post._id
 
         posts = backend.Post.query.filter(backend.Post.star==True)
-        fitem = QtGui.QTreeWidgetItem(['%s (%d)'%("Starred", posts.count())])
+        fitem = QtGui.QTreeWidgetItem(["Starred"])
+        fitem._id = -2
         self.ui.feeds.addTopLevelItem(fitem)
         for post in posts:
             pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
@@ -61,6 +63,7 @@ class Main(QtGui.QMainWindow):
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
             fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+            fitem._id = feed.xmlurl
             self.ui.feeds.addTopLevelItem(fitem)
             for post in feed.posts:
                 pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
@@ -89,8 +92,13 @@ class Main(QtGui.QMainWindow):
             item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
 
             # Update unread count
-            unread_count = len(filter(lambda p: not p.read, p.feed.posts))
-            fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
+            if fitem._id == -1: # Recent
+                pass
+            elif fitem._id == -2: # Starred
+                pass
+            else: # Feed
+                unread_count = len(filter(lambda p: not p.read, p.feed.posts))
+                fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
         else: # Feed
             item.setExpanded(not item.isExpanded())
 
@@ -140,7 +148,7 @@ class Main(QtGui.QMainWindow):
 
     def on_actionFast_Mode_activated(self, b=None):
         if b is None: return
-        self.fast_mode = b
+        self.fast_mode = self.ui.actionFast_Mode.isChecked()
 
     def on_actionUpdate_Feed_activated(self, b=None):
         if b is not None: return
