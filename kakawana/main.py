@@ -28,17 +28,21 @@ class Main(QtGui.QMainWindow):
         # This is always the same
         self.ui=MainWindow()
         self.ui.setupUi(self)
-        self.loadFeeds()
+        self.loadFeeds(-1)
 
-    def loadFeeds(self):
+    def loadFeeds(self, expandedFeedId=None):
         feeds=backend.Feed.query.all()
         self.ui.feeds.clear()
         # Add "some recent"
         posts =  backend.Post.query.filter(backend.Post.read==False).\
             order_by("date desc").limit(50)
         fitem = QtGui.QTreeWidgetItem(["Recent"])
+        fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -1
         self.ui.feeds.addTopLevelItem(fitem)
+        if expandedFeedId == -1:
+            fitem.setExpanded(True)
+            
         for post in posts:
             pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
             if post.read:
@@ -49,8 +53,12 @@ class Main(QtGui.QMainWindow):
 
         posts = backend.Post.query.filter(backend.Post.star==True)
         fitem = QtGui.QTreeWidgetItem(["Starred"])
+        fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -2
         self.ui.feeds.addTopLevelItem(fitem)
+        if expandedFeedId == -2:
+            fitem.setExpanded(True)
+            
         for post in posts:
             pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
             if post.read:
@@ -62,9 +70,12 @@ class Main(QtGui.QMainWindow):
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
-            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
             fitem._id = feed.xmlurl
             self.ui.feeds.addTopLevelItem(fitem)
+            if expandedFeedId == feed.xmlurl:
+                fitem.setExpanded(True)
+                
             for post in feed.posts:
                 pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
                 if post.read:
