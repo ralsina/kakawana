@@ -95,7 +95,7 @@ class Main(QtGui.QMainWindow):
                 fname = os.path.join(backend.dbdir, 'cache',
                     '%s.jpg'%hashlib.md5(p._id).hexdigest())
                 if os.path.exists(fname):
-                    self.ui.html.setHtml('''<img src="file://%s">'''%fname)
+                    self.ui.html.setHtml('''<img src="file://%s" style="max-width:100%%;">'''%fname)
                 else:
                     self.ui.html.load(QtCore.QUrl(p.url))
             p.read=True
@@ -135,13 +135,13 @@ class Main(QtGui.QMainWindow):
             print furl
             f=feedparser.parse(furl)
             feeds.append(f)            
-        items = [ '%d - %s'%(i,feed['feed']['title']) for i,feed in enumerate(feeds) ]
+        items = [ u'%d - %s'%(i,feed['feed']['title']) for i,feed in enumerate(feeds) ]
         ll=QtCore.QStringList()
         for i in items:
             ll.append(QtCore.QString(i))
         item, ok = QtGui.QInputDialog.getItem(self, 
-            "Kakawana - New feed", 
-            "What feed do you prefer for this site?", 
+            u"Kakawana - New feed", 
+            u"What feed do you prefer for this site?", 
             ll,
             editable=False)
         if not ok:
