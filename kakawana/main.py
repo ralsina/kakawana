@@ -33,9 +33,9 @@ class Main(QtGui.QMainWindow):
     def loadFeeds(self):
         feeds=backend.Feed.query.all()
         self.ui.feeds.clear()
-        # Add "all recent"
-        # FIXME: add date field to Post and sort
-        posts =  backend.Post.query.filter(backend.Post.read==False).limit(50)
+        # Add "some recent"
+        posts =  backend.Post.query.filter(backend.Post.read==False).\
+            order_by("date desc").limit(50)
         fitem = QtGui.QTreeWidgetItem(['%s (%d)'%("Recent", posts.count())])
         self.ui.feeds.addTopLevelItem(fitem)
         for post in posts:
@@ -148,8 +148,8 @@ class Main(QtGui.QMainWindow):
         # Launch update of current feed
         item = self.ui.feeds.currentItem()
         if not item: return
-
-        f= backend.Feed.get_by(name=unicode(item.text(0)))
+        feed_name=' ('.join(unicode(item.text(0)).split(' (')[:-1])
+        f= backend.Feed.get_by(name=feed_name)
         f.addPosts()
         
 
