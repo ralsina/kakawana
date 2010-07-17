@@ -100,7 +100,10 @@ class Main(QtGui.QMainWindow):
                 unread_count = len(filter(lambda p: not p.read, p.feed.posts))
                 fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
         else: # Feed
-            item.setExpanded(not item.isExpanded())
+            # FIXME: make this update the feed like google reader
+            if not item.isExpanded():
+                self.ui.feeds.collapseAll()
+                item.setExpanded(True)
 
     def on_actionNew_Feed_triggered(self, b=None):
         '''Ask for site or feed URL and add it to backend'''

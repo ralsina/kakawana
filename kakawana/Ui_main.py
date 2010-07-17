@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Fri Jul 16 18:39:08 2010
+# Created: Sat Jul 17 00:00:35 2010
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,6 +23,7 @@ class Ui_MainWindow(object):
         self.feeds = QtGui.QTreeWidget(self.splitter)
         self.feeds.setIndentation(0)
         self.feeds.setRootIsDecorated(False)
+        self.feeds.setAnimated(True)
         self.feeds.setObjectName("feeds")
         self.feeds.headerItem().setText(0, "1")
         self.feeds.header().setVisible(False)
