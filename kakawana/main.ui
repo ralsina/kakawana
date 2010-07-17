@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTreeWidget" name="feeds">
+       <property name="indentation">
+        <number>0</number>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QWebView" name="html">
+       <property name="url">
+        <url>
+         <string>about:blank</string>
+        </url>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNew_Feed"/>
+   <addaction name="actionDelete_Feed"/>
+   <addaction name="separator"/>
+   <addaction name="actionPrevious"/>
+   <addaction name="actionNext"/>
+   <addaction name="actionUpdate_Feed"/>
+   <addaction name="actionFast_Mode"/>
+  </widget>
+  <action name="actionNext">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/next.svg</normaloff>:/icons/next.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Next</string>
+   </property>
+  </action>
+  <action name="actionPrevious">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/previous.svg</normaloff>:/icons/previous.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Previous</string>
+   </property>
+  </action>
+  <action name="actionNew_Feed">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/filenew.svg</normaloff>:/icons/filenew.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New Feed</string>
+   </property>
+  </action>
+  <action name="actionDelete_Feed">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/close.svg</normaloff>:/icons/close.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Feed</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Feed">
+   <property name="text">
+    <string>Update Feed</string>
+   </property>
+  </action>
+  <action name="actionFast_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fast Mode</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKit/QWebView</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>
