@@ -5,7 +5,7 @@
 import os
 from elixir import *
 import feedparser
-import pickle
+import pickle, base64
 import datetime, time
 VERSION="0.0.1"
 
@@ -92,7 +92,7 @@ class Post(Entity):
             url = post.link,
             _id = post.id,
             date = post_date,
-            data = pickle.dumps(post)),
+            data = base64.b64encode(pickle.dumps(post))),
             surrogate = False,
             )
         return p

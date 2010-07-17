@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Jul 17 00:00:35 2010
+# Created: Sat Jul 17 01:24:44 2010
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,6 +29,7 @@ class Ui_MainWindow(object):
         self.feeds.header().setVisible(False)
         self.html = QtWebKit.QWebView(self.splitter)
         self.html.setUrl(QtCore.QUrl("about:blank"))
+        self.html.setRenderHints(QtGui.QPainter.Antialiasing|QtGui.QPainter.HighQualityAntialiasing|QtGui.QPainter.SmoothPixmapTransform|QtGui.QPainter.TextAntialiasing)
         self.html.setObjectName("html")
         self.verticalLayout.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
