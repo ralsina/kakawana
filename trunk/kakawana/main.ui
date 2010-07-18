@@ -83,7 +83,6 @@
    <addaction name="actionPrevious"/>
    <addaction name="actionNext"/>
    <addaction name="actionUpdate_Feed"/>
-   <addaction name="actionFast_Mode"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
@@ -124,14 +123,6 @@
   <action name="actionUpdate_Feed">
    <property name="text">
     <string>Update Feed</string>
-   </property>
-  </action>
-  <action name="actionFast_Mode">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Fast Mode</string>
    </property>
   </action>
  </widget>
