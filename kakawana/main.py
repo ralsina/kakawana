@@ -30,6 +30,11 @@ class Main(QtGui.QMainWindow):
         self.ui.setupUi(self)
         self.loadFeeds(-1)
 
+        self.modes=QtGui.QComboBox()
+        self.modes.addItems(["Feed Decides", "Site", "Feed", "Fast Site", "Fast Feed"])
+        self.modes.currentIndexChanged.connect(self.modeChange)
+        self.ui.toolBar.addWidget(self.modes)
+
     def loadFeeds(self, expandedFeedId=None):
         feeds=backend.Feed.query.all()
         self.ui.feeds.clear()
@@ -160,19 +165,27 @@ class Main(QtGui.QMainWindow):
         f.addPosts(feed=feed)
         self.loadFeeds()
 
-    def on_actionFast_Mode_activated(self, b=None):
-        if b is None: return
-        self.fast_mode = self.ui.actionFast_Mode.isChecked()
+    def modeChange(self, mode=None):
+        #if not isinstance(mode, int):
+            #return
+        self.mode = mode
+        print "Switching to mode:", mode
+        self.on_feeds_itemClicked(self.ui.feeds.currentItem())
 
     def on_actionUpdate_Feed_activated(self, b=None):
         if b is not None: return
 
         # Launch update of current feed
         item = self.ui.feeds.currentItem()
-        if not item: return
-        feed_name=' ('.join(unicode(item.text(0)).split(' (')[:-1])
+        fitem = item.parent()
+        if not fitem:
+            fitem = item
+        if fitem._id in (-1,-2):
+            return
+        feed_name=' ('.join(unicode(fitem.text(0)).split(' (')[:-1])
         f= backend.Feed.get_by(name=feed_name)
         f.addPosts()
+        self.loadFeeds(fitem._id)
         
 
 def main():
