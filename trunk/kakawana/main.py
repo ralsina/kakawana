@@ -17,8 +17,31 @@ import backend
 import feedfinder
 import feedparser
 import pickle
+import datetime
+import time
+import base64
+import codecs
 
 VERSION="0.0.1"
+
+# Templating stuff
+import tenjin
+# The obvious import doesn't work for complicated reasons ;-)
+to_str=tenjin.helpers.to_str
+escape=tenjin.helpers.escape
+templateEngine=tenjin.Engine()
+tmplDir=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
+# To convert UTC times (returned by feedparser) to local times
+def utc2local(dt):
+  return dt-datetime.timedelta(seconds=time.timezone)
+def renderTemplate(tname, **context):
+  context['to_str']=to_str
+  context['escape']=escape
+  context['utc2local']=utc2local
+  codecs.open('x.html', 'w', 'utf-8').write(templateEngine.render(os.path.join(tmplDir,tname), context))
+  return templateEngine.render(os.path.join(tmplDir,tname), context)
+# End oftemplating stuff
+
 
 # Create a class for our main window
 class Main(QtGui.QMainWindow):
@@ -106,7 +129,24 @@ class Main(QtGui.QMainWindow):
                 self.ui.html.load(QtCore.QUrl(p.url))
             elif self.mode == 2:
                 # Feed mode
-                pass
+                data = pickle.loads(base64.b64decode(p.data))
+
+                if 'content' in data:
+                    content = '<hr>'.join([c.value for c in data['content']])
+                elif 'summary' in data:
+                    content = data['summary']
+                elif 'value' in post:
+                    content = data['value']
+
+                # Rudimentary NON-html detection
+                if not '<' in content:
+                    content=escape(content).replace('\n\n', '<p>')
+                
+                self.ui.html.setHtml(renderTemplate('post.tmpl',
+                    post = p,
+                    data = data,
+                    content = content,
+                    cssdir = tmplDir))
             elif self.mode == 3:
                 # Fast site mode
                 fname = os.path.join(backend.dbdir, 'cache',
