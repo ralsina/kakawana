@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<head>
+<title>#{post.title}</title>
+    <link rel="stylesheet" href="file://#{cssdir}/screen.css" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="file://#{cssdir}/print.css" type="text/css" media="print">
+    <!--[if IE]>
+        <link rel="stylesheet" href="file://#{cssdir}/ie.css" type="text/css" media="screen, projection">
+    <![endif]-->
+    <link rel="stylesheet" href="file://#{cssdir}/style.css" type="text/css" media="screen, projection">
+</head>
+<body>
+<div class="headerbox">
+<a href="#{post.url}"><h1>#{post.title}</h1></a>
+</div>
+<div class="headerbox">
+<b>Date:&nbsp;</b>#{utc2local(post.date)}<br>
+</div>
+<div style='margin-top: 1em;'>
+#{content}
+<p>
+<?py for enclosure in  data.enclosures: ?>
+  <?py if enclosure.filetype.startswith('audio'): ?>
+    <audio autobuffer="Yes" controls="controls" src="#{enclosure.href}"></audio><br>
+  <?py #end ?>
+  <?py if enclosure.filetype.startswith('image'): ?>
+    <img src="#{enclosure.href}"></img><br>
+  <?py #end ?>
+  <?py if enclosure.filetype.startswith('video'): ?>
+    <video autobuffer="Yes" controls="controls" src="#{enclosure.href}"></video><br>
+  <?py #end ?>
+  <a href="#{enclosure.href}">Download</a><br>
+<?py #end ?>
+
+<hr>
+<a href="#{post.url}">Complete Story</a>
+</div>
+</body>
