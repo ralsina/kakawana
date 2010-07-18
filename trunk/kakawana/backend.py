@@ -41,6 +41,8 @@ class Feed(Entity):
     '''everything in the feed'''
     posts=OneToMany("Post")
     
+    check_date=Field(DateTime, required=False, default=datetime.datetime(1970,1,1))
+    
     def __repr__(self):
         return "Feed: %s <%s>"%(self.name, self.url)
 
