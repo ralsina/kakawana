@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Jul 17 01:24:44 2010
+# Created: Sat Jul 17 21:45:29 2010
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,16 +65,12 @@ class Ui_MainWindow(object):
         self.actionDelete_Feed.setObjectName("actionDelete_Feed")
         self.actionUpdate_Feed = QtGui.QAction(MainWindow)
         self.actionUpdate_Feed.setObjectName("actionUpdate_Feed")
-        self.actionFast_Mode = QtGui.QAction(MainWindow)
-        self.actionFast_Mode.setCheckable(True)
-        self.actionFast_Mode.setObjectName("actionFast_Mode")
         self.toolBar.addAction(self.actionNew_Feed)
         self.toolBar.addAction(self.actionDelete_Feed)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPrevious)
         self.toolBar.addAction(self.actionNext)
         self.toolBar.addAction(self.actionUpdate_Feed)
-        self.toolBar.addAction(self.actionFast_Mode)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -87,7 +83,6 @@ class Ui_MainWindow(object):
         self.actionNew_Feed.setText(QtGui.QApplication.translate("MainWindow", "New Feed", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDelete_Feed.setText(QtGui.QApplication.translate("MainWindow", "Delete Feed", None, QtGui.QApplication.UnicodeUTF8))
         self.actionUpdate_Feed.setText(QtGui.QApplication.translate("MainWindow", "Update Feed", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionFast_Mode.setText(QtGui.QApplication.translate("MainWindow", "Fast Mode", None, QtGui.QApplication.UnicodeUTF8))
 
 from PyQt4 import QtWebKit
 import icons_rc
