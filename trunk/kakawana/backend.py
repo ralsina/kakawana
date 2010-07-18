@@ -37,11 +37,14 @@ class Feed(Entity):
     '''The URL of the comic's website'''
     xmlurl = Field(Unicode,required=True, primary_key=True)
     '''The URL for the RSS/Atom feed'''
-    data=Field(Unicode,required=True)
+    data = Field(Unicode,required=True)
     '''everything in the feed'''
-    posts=OneToMany("Post")
-    
+    posts = OneToMany("Post")
+    '''Posts in the feed'''
+    etag = Field(Text, default='')
+    '''etag of last check'''
     check_date=Field(DateTime, required=False, default=datetime.datetime(1970,1,1))
+    '''timestamp of last check'''
     
     def __repr__(self):
         return "Feed: %s <%s>"%(self.name, self.url)
@@ -49,14 +52,30 @@ class Feed(Entity):
     def addPosts(self, feed=None):
         '''Takes an optional already parsed feed'''
         if feed==None:
-            feed=feedparser.parse(self.xmlurl)
+            feed=feedparser.parse(self.xmlurl,
+                etag = self.etag,
+                modified = self.check_date.timetuple())
+            self.check_date = datetime.datetime.now()
+            if feed.status == 304: # No change
+                print "Got 304 on feed update"
+                saveData()
+                return
+            elif feed.status == 301: # Permanent redirect
+                print "Got 301 on feed update => %s"%feed.href
+                self.xmlUrl=feed.href
+            elif feed.status == 410: # Feed deleted. FIXME: tell the user and stop trying!
+                print "Got 410 on feed update"
+                saveData()
+                return
+            if 'etag' in feed:
+                self.etag = feed['etag']
 
         for post in feed['entries']:
             print post.title
             p=Post.get_or_create(post)
             self.posts.insert(0,p)
             saveData()
-
+        saveData()
         
         
 
