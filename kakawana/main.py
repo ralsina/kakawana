@@ -24,7 +24,7 @@ VERSION="0.0.1"
 class Main(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
-        self.fast_mode = False
+        self.mode = 0
         # This is always the same
         self.ui=MainWindow()
         self.ui.setupUi(self)
@@ -94,15 +94,30 @@ class Main(QtGui.QMainWindow):
         fitem = item.parent()
         if fitem: # Post
             p=backend.Post.get_by(_id=item._id)
-            if not self.fast_mode: #Slow mode
+
+            # We display differently depending on current mode
+            # The modes are:
+            # ["Feed Decides", "Site", "Feed", "Fast Site", "Fast Feed"]
+            if self.mode == 0:
+                # Feed decides
                 self.ui.html.load(QtCore.QUrl(p.url))
-            else:
+            elif self.mode == 1:
+                # Site mode
+                self.ui.html.load(QtCore.QUrl(p.url))
+            elif self.mode == 2:
+                # Feed mode
+                pass
+            elif self.mode == 3:
+                # Fast site mode
                 fname = os.path.join(backend.dbdir, 'cache',
                     '%s.jpg'%hashlib.md5(p._id).hexdigest())
                 if os.path.exists(fname):
                     self.ui.html.setHtml('''<img src="file://%s" style="max-width:100%%;">'''%fname)
                 else:
                     self.ui.html.load(QtCore.QUrl(p.url))
+            elif self.mode == 4:
+                # Fast Feed mode
+                pass
             p.read=True
             backend.saveData()
             item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
