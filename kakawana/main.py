@@ -68,8 +68,8 @@ class Main(QtGui.QMainWindow):
         self.mode = 0
         # This is always the same
         self.ui=MainWindow()
-        QtWebKit.QWebSettings.globalSettings().\
-            setAttribute(QtWebKit.QWebSettings.PluginsEnabled, True)
+        #QtWebKit.QWebSettings.globalSettings().\
+            #setAttribute(QtWebKit.QWebSettings.PluginsEnabled, True)
         self.ui.setupUi(self)
         self.loadFeeds(-1)
 
@@ -94,8 +94,9 @@ class Main(QtGui.QMainWindow):
         if cmd[0] == 'updated':
             xmlurl = cmd[1]
             feed = backend.Feed.get_by(xmlurl = xmlurl)
-            feed.addPosts(cmd[2])
-            self.updateFeed(xmlurl)
+            if feed:
+                feed.addPosts(cmd[2])
+                self.updateFeed(xmlurl)
 
     def updateFeed(self, feed_id):
         # feed_id is a Feed.xmlurl, which is also item._id
@@ -111,12 +112,7 @@ class Main(QtGui.QMainWindow):
                 for post in feed.posts:
                     # If it's not there, add it
                     if post._id not in existing:
-                        pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
-                        if post.read:
-                            pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
-                        else:
-                            pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
-                        pitem._id=post._id
+                        pitem=post.createItem(fitem)
                 unread_count = len(filter(lambda p: not p.read, feed.posts))
                 fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
                 fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
@@ -135,12 +131,7 @@ class Main(QtGui.QMainWindow):
             fitem.setExpanded(True)
             
         for post in posts:
-            pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
-            if post.read:
-                pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
-            else:
-                pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
-            pitem._id=post._id
+            pitem = post.createItem(fitem)
 
         posts = backend.Post.query.filter(backend.Post.star==True)
         fitem = QtGui.QTreeWidgetItem(["Starred"])
@@ -151,12 +142,7 @@ class Main(QtGui.QMainWindow):
             fitem.setExpanded(True)
             
         for post in posts:
-            pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
-            if post.read:
-                pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
-            else:
-                pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
-            pitem._id=post._id
+            pitem=post.createItem(fitem)
         
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
@@ -168,12 +154,7 @@ class Main(QtGui.QMainWindow):
                 fitem.setExpanded(True)
                 
             for post in feed.posts:
-                pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
-                if post.read:
-                    pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
-                else:
-                    pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
-                pitem._id=post._id
+                pitem=post.createItem(fitem)
 
     def on_feeds_itemClicked(self, item=None):
         if item is None: return
@@ -347,8 +328,6 @@ class Main(QtGui.QMainWindow):
         self.loadFeeds()
 
 
-
-        
 def main():
     # Init the database before doing anything else
     backend.initDB()
