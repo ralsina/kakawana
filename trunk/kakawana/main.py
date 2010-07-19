@@ -241,8 +241,21 @@ class Main(QtGui.QMainWindow):
         f= backend.Feed.get_by(name=feed_name)
         f.addPosts()
         self.loadFeeds(fitem._id)
-        
 
+
+    def on_actionImport_Google_Reader_activated(self, b=None):
+        if b is not None: return
+        from google_import import Google_Import
+
+        d = Google_Import(parent = self)
+        r = d.exec_()
+        
+        from libgreader import GoogleReader, ClientAuth, Feed
+        auth = ClientAuth(username, password)
+        reader = GoogleReader(auth)
+        print reader.getReadingList()
+
+        
 def main():
     # Init the database before doing anything else
     backend.initDB()
