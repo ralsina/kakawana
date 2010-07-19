@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Jul 18 09:33:35 2010
+# Created: Mon Jul 19 13:30:12 2010
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,8 +21,10 @@ class Ui_MainWindow(object):
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.feeds = QtGui.QTreeWidget(self.splitter)
+        self.feeds.setTextElideMode(QtCore.Qt.ElideMiddle)
         self.feeds.setIndentation(0)
         self.feeds.setRootIsDecorated(False)
+        self.feeds.setUniformRowHeights(True)
         self.feeds.setAnimated(True)
         self.feeds.setObjectName("feeds")
         self.feeds.headerItem().setText(0, "1")
