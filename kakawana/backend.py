@@ -33,11 +33,11 @@ class Feed(Entity):
     # I think it's nicer than the automatic names Elixir uses.
     name = Field(Unicode,required=True)
     '''The name of the comic'''
-    url = Field(Unicode,required=True)
+    url = Field(Unicode,required=False)
     '''The URL of the comic's website'''
     xmlurl = Field(Unicode,required=True, primary_key=True)
     '''The URL for the RSS/Atom feed'''
-    data = Field(Unicode,required=True)
+    data = Field(Unicode,required=False)
     '''everything in the feed'''
     posts = OneToMany("Post")
     '''Posts in the feed'''

@@ -6,7 +6,7 @@ import os, sys, hashlib
 from pprint import pprint
 
 # Import Qt modules
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui, QtWebKit
 
 # Import the compiled UI module
 from Ui_main import Ui_MainWindow as MainWindow
@@ -22,6 +22,7 @@ import time
 import base64
 import codecs
 import keyring
+from multiprocessing import Process, Queue
 
 VERSION="0.0.1"
 
@@ -43,6 +44,22 @@ def renderTemplate(tname, **context):
   return templateEngine.render(os.path.join(tmplDir,tname), context)
 # End oftemplating stuff
 
+fetcher_in = Queue()
+fetcher_out = Queue()
+
+# Background feed fetcher
+def fetcher():
+    while True:
+        print 'Fetching'
+        try:
+            cmd = fetcher_in.get(5)
+            if cmd[0] == 'update':
+                print 'Updating:', cmd[1],'...',
+                f=feedparser.parse(cmd[1])
+                fetcher_out.put(['updated',cmd[1],f])
+                print 'Done'
+        except:
+            print 'exception in fetcher'
 
 # Create a class for our main window
 class Main(QtGui.QMainWindow):
@@ -51,6 +68,8 @@ class Main(QtGui.QMainWindow):
         self.mode = 0
         # This is always the same
         self.ui=MainWindow()
+        QtWebKit.QWebSettings.globalSettings().\
+            setAttribute(QtWebKit.QWebSettings.PluginsEnabled, True)
         self.ui.setupUi(self)
         self.loadFeeds(-1)
 
@@ -58,6 +77,49 @@ class Main(QtGui.QMainWindow):
         self.modes.addItems(["Feed Decides", "Site", "Feed", "Fast Site", "Fast Feed"])
         self.modes.currentIndexChanged.connect(self.modeChange)
         self.ui.toolBar.addWidget(self.modes)
+
+        self.fetcher = Process(target=fetcher)
+        self.fetcher.daemon = True
+        self.fetcher.start()
+
+        self.update_timer = QtCore.QTimer()
+        self.update_timer.timeout.connect(self.get_updates)
+        self.update_timer.start(5000)
+
+    def get_updates(self):
+        try:
+            cmd = fetcher_out.get(False) # Don't block
+        except:
+            return
+        if cmd[0] == 'updated':
+            xmlurl = cmd[1]
+            feed = backend.Feed.get_by(xmlurl = xmlurl)
+            feed.addPosts(cmd[2])
+            self.updateFeed(xmlurl)
+
+    def updateFeed(self, feed_id):
+        # feed_id is a Feed.xmlurl, which is also item._id
+        for i in range(self.ui.feeds.topLevelItemCount()):
+            fitem = self.ui.feeds.topLevelItem(i)
+            if fitem._id == feed_id:
+                # This is the one to update
+                feed = backend.Feed.get_by(xmlurl = feed_id)
+                # Get the ids of the existing items
+                existing = set()
+                for j in range (fitem.childCount()):
+                    existing.add(fitem.child(j)._id)
+                for post in feed.posts:
+                    # If it's not there, add it
+                    if post._id not in existing:
+                        pitem=QtGui.QTreeWidgetItem(fitem,[post.title])
+                        if post.read:
+                            pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+                        else:
+                            pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
+                        pitem._id=post._id
+                unread_count = len(filter(lambda p: not p.read, feed.posts))
+                fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
+                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
 
     def loadFeeds(self, expandedFeedId=None):
         feeds=backend.Feed.query.all()
@@ -173,6 +235,8 @@ class Main(QtGui.QMainWindow):
                 fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
         else: # Feed
             # FIXME: make this update the feed like google reader
+            print 'Sending:', ['update',item._id]
+            fetcher_in.put(['update',item._id])
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
@@ -270,13 +334,19 @@ class Main(QtGui.QMainWindow):
             # Save in appropiate keyring
             keyring.set_password('kakawana','google_username',username)
             keyring.set_password('kakawana','google_password',password)
-        from libgreader import GoogleReader, ClientAuth, Feed
-        auth = ClientAuth(username, password)
-        reader = GoogleReader(auth)
+        import libgreader as gr
+        
+        auth = gr.ClientAuth(username, password)
+        reader = gr.GoogleReader(auth)
         reader.buildSubscriptionList()
         feeds = reader.getFeeds()
         for f in feeds:
-            print f
+            f1 = backend.Feed.update_or_create(dict(name = f.title.decode('utf-8'), xmlurl = f.url),
+                surrogate=False)
+        backend.saveData()
+        self.loadFeeds()
+
+
 
         
 def main():
