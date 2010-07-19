@@ -13,4 +13,3 @@ class Google_Import(QtGui.QDialog):
                 os.path.dirname(__file__)),'google_import.ui')
         uic.loadUi(uifile, self)
 
-
