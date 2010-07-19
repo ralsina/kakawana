@@ -19,13 +19,13 @@
 #{content}
 <p>
 <?py for enclosure in  data.enclosures: ?>
-  <?py if enclosure.filetype.startswith('audio'): ?>
+  <?py if enclosure.type.startswith('audio'): ?>
     <audio autobuffer="Yes" controls="controls" src="#{enclosure.href}"></audio><br>
   <?py #end ?>
-  <?py if enclosure.filetype.startswith('image'): ?>
+  <?py if enclosure.type.startswith('image'): ?>
     <img src="#{enclosure.href}"></img><br>
   <?py #end ?>
-  <?py if enclosure.filetype.startswith('video'): ?>
+  <?py if enclosure.type.startswith('video'): ?>
     <video autobuffer="Yes" controls="controls" src="#{enclosure.href}"></video><br>
   <?py #end ?>
   <a href="#{enclosure.href}">Download</a><br>
