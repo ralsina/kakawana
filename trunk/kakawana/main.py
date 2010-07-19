@@ -21,6 +21,7 @@ import datetime
 import time
 import base64
 import codecs
+import keyring
 
 VERSION="0.0.1"
 
@@ -248,12 +249,34 @@ class Main(QtGui.QMainWindow):
         from google_import import Google_Import
 
         d = Google_Import(parent = self)
-        r = d.exec_()
+        username = keyring.get_password('kakawana', 'google_username') or ''
+        password = keyring.get_password('kakawana', 'google_password') or ''
         
+        d.username.setText(username)
+        d.password.setText(password)
+        if username or password:
+            d.remember.setChecked(True)
+        
+        r = d.exec_()
+
+
+        if r == QtGui.QDialog.Rejected:
+            return
+        # Do import
+
+        username = unicode(d.username.text())
+        password = unicode(d.password.text())
+        if d.remember.isChecked():
+            # Save in appropiate keyring
+            keyring.set_password('kakawana','google_username',username)
+            keyring.set_password('kakawana','google_password',password)
         from libgreader import GoogleReader, ClientAuth, Feed
         auth = ClientAuth(username, password)
         reader = GoogleReader(auth)
-        print reader.getReadingList()
+        reader.buildSubscriptionList()
+        feeds = reader.getFeeds()
+        for f in feeds:
+            print f
 
         
 def main():
