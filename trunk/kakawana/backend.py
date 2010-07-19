@@ -9,6 +9,9 @@ import pickle, base64
 import datetime, time
 VERSION="0.0.1"
 
+# Import Qt modules
+from PyQt4 import QtCore, QtGui, QtWebKit
+
 feedparser.USER_AGENT = 'Kakawana/%s +http://kakawana.googlecode.com/'%VERSION
 
 dbdir=os.path.join(os.path.expanduser("~"),".kakawana")
@@ -77,7 +80,6 @@ class Feed(Entity):
             saveData()
         saveData()
         
-        
 
 class Post(Entity):
     '''Everything in the feed'''
@@ -118,7 +120,14 @@ class Post(Entity):
             )
         return p
 
-
+    def createItem(self, fitem):
+        pitem=QtGui.QTreeWidgetItem(fitem,[self.title])
+        if self.read:
+            pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+        else:
+            pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
+        pitem._id=self._id
+        
     def __repr__(self):
         return "Post: %s"%self.title
 
