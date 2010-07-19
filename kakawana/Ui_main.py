@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Jul 17 21:45:29 2010
+# Created: Sun Jul 18 09:33:35 2010
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,12 +65,15 @@ class Ui_MainWindow(object):
         self.actionDelete_Feed.setObjectName("actionDelete_Feed")
         self.actionUpdate_Feed = QtGui.QAction(MainWindow)
         self.actionUpdate_Feed.setObjectName("actionUpdate_Feed")
+        self.actionImport_Google_Reader = QtGui.QAction(MainWindow)
+        self.actionImport_Google_Reader.setObjectName("actionImport_Google_Reader")
         self.toolBar.addAction(self.actionNew_Feed)
         self.toolBar.addAction(self.actionDelete_Feed)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPrevious)
         self.toolBar.addAction(self.actionNext)
         self.toolBar.addAction(self.actionUpdate_Feed)
+        self.toolBar.addAction(self.actionImport_Google_Reader)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -83,6 +86,7 @@ class Ui_MainWindow(object):
         self.actionNew_Feed.setText(QtGui.QApplication.translate("MainWindow", "New Feed", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDelete_Feed.setText(QtGui.QApplication.translate("MainWindow", "Delete Feed", None, QtGui.QApplication.UnicodeUTF8))
         self.actionUpdate_Feed.setText(QtGui.QApplication.translate("MainWindow", "Update Feed", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionImport_Google_Reader.setText(QtGui.QApplication.translate("MainWindow", "Import Google Reader", None, QtGui.QApplication.UnicodeUTF8))
 
 from PyQt4 import QtWebKit
 import icons_rc
