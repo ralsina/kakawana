@@ -20,6 +20,7 @@ import base64
 import codecs
 import keyring
 from multiprocessing import Process, Queue
+from audioplayer import AudioPlayer
 
 VERSION="0.0.1"
 
@@ -64,6 +65,7 @@ class Main(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.mode = 0
         self.showAllFeeds = False
+        self.enclosures = []
         # This is always the same
         uifile = os.path.join(
             os.path.abspath(
@@ -73,6 +75,11 @@ class Main(QtGui.QMainWindow):
         #QtWebKit.QWebSettings.globalSettings().\
             #setAttribute(QtWebKit.QWebSettings.PluginsEnabled, True)
         #self.ui.setupUi(self)
+
+        self.enclosureLayout = QtGui.QVBoxLayout(self.enclosureContainer)
+        self.enclosureContainer.setLayout(self.enclosureLayout)
+        self.enclosureContainer.hide()
+        
         self.loadFeeds(-1)
 
         self.modes=QtGui.QComboBox()
@@ -209,6 +216,25 @@ class Main(QtGui.QMainWindow):
             elif self.mode == 4:
                 # Fast Feed mode
                 pass
+
+            # Enclosures
+            for enclosure in self.enclosures:
+                enclosure.hide()
+                enclosure.delete()
+            self.enclosures=[]
+            for e in data.enclosures:
+                if hasattr(e,'type'):
+                    if e.type.startswith('audio'):
+                        player = AudioPlayer(e.href,
+                            self.enclosureContainer)
+                        player.show()
+                        self.enclosures.append(player)
+                        self.enclosureLayout.addWidget(player)
+            if self.enclosures:
+                self.enclosureContainer.show()
+            else:
+                self.enclosureContainer.hide()
+            
             p.read=True
             backend.saveData()
             item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
