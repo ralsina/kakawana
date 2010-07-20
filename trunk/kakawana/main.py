@@ -165,6 +165,10 @@ class Main(QtGui.QMainWindow):
             # We display differently depending on current mode
             # The modes are:
             # ["Feed Decides", "Site", "Feed", "Fast Site", "Fast Feed"]
+            
+            # Use feed mode as feed decides for a while
+            if self.mode == 0:
+                self.mode = 2
             if self.mode == 0:
                 # Feed decides
                 self.ui.html.load(QtCore.QUrl(p.url))
