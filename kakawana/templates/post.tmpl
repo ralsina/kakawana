@@ -5,7 +5,10 @@
     <link rel="stylesheet" href="file://#{cssdir}/style.css" type="text/css" media="screen, projection">
 </head>
 <body>
-<a href="#{post.feed.url}">#{post.feed.name}</a>
+<a href="#{post.feed.url}">#{post.feed.name}</a>&nbsp;|&nbsp;
+<a href="cmd://mark-all-read">Mark all as read</a>&nbsp;|&nbsp;
+<a href="cmd://refresh">Refresh</a>&nbsp;|&nbsp;
+<a href="cmd://settings">Settings</a>
 <hr>
 <a href="#{post.url}"><h1>#{post.title}</h1></a>
 Posted at #{utc2local(post.date)} | 
