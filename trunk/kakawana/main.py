@@ -6,10 +6,7 @@ import os, sys, hashlib
 from pprint import pprint
 
 # Import Qt modules
-from PyQt4 import QtCore, QtGui, QtWebKit
-
-# Import the compiled UI module
-from Ui_main import Ui_MainWindow as MainWindow
+from PyQt4 import QtCore, QtGui, QtWebKit, uic
 
 # Import our backend
 import backend
@@ -67,10 +64,14 @@ class Main(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.mode = 0
         # This is always the same
-        self.ui=MainWindow()
+        uifile = os.path.join(
+            os.path.abspath(
+                os.path.dirname(__file__)),'main.ui')
+        uic.loadUi(uifile, self)
+        self.ui = self
         #QtWebKit.QWebSettings.globalSettings().\
             #setAttribute(QtWebKit.QWebSettings.PluginsEnabled, True)
-        self.ui.setupUi(self)
+        #self.ui.setupUi(self)
         self.loadFeeds(-1)
 
         self.modes=QtGui.QComboBox()
