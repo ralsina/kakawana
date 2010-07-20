@@ -3,6 +3,7 @@
 import sys, os
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.phonon import Phonon
+import icons_rc
 
 class AudioPlayer(QtGui.QWidget):
     def __init__(self, url, parent = None):
@@ -20,6 +21,9 @@ class AudioPlayer(QtGui.QWidget):
         self.player.tick.connect(self.tock)
 
         self.play_pause = QtGui.QPushButton(self)
+        self.play_pause.setIcon(QtGui.QIcon(':/icons/player_play.svg'))
+        self.play_pause.clicked.connect(self.playClicked)
+        self.player.stateChanged.connect(self.stateChanged)
 
         self.slider = Phonon.SeekSlider(self.player , self)
         
@@ -35,8 +39,18 @@ class AudioPlayer(QtGui.QWidget):
         layout.addWidget(self.slider)
         layout.addWidget(self.status)
         layout.addWidget(self.download)
-        
-        self.player.play()
+
+    def playClicked(self):
+        if self.player.state() == Phonon.PlayingState:
+            self.player.pause()
+        else:
+            self.player.play()
+            
+    def stateChanged(self, new, old):
+        if new == Phonon.PlayingState:
+            self.play_pause.setIcon(QtGui.QIcon(':/icons/player_pause.svg'))
+        else:
+            self.play_pause.setIcon(QtGui.QIcon(':/icons/player_play.svg'))
 
     def tock(self, time):
         time = time/1000
