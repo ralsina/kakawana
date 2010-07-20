@@ -90,6 +90,7 @@
    <addaction name="actionNext"/>
    <addaction name="actionUpdate_Feed"/>
    <addaction name="actionImport_Google_Reader"/>
+   <addaction name="actionShow_All_Feeds"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
@@ -135,6 +136,11 @@
   <action name="actionImport_Google_Reader">
    <property name="text">
     <string>Import Google Reader</string>
+   </property>
+  </action>
+  <action name="actionShow_All_Feeds">
+   <property name="text">
+    <string>Show All Feeds</string>
    </property>
   </action>
  </widget>
