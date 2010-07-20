@@ -139,6 +139,9 @@
    </property>
   </action>
   <action name="actionShow_All_Feeds">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show All Feeds</string>
    </property>
