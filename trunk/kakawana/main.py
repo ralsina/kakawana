@@ -95,8 +95,21 @@ class Main(QtGui.QMainWindow):
 
         self.update_timer = QtCore.QTimer()
         self.update_timer.timeout.connect(self.get_updates)
-        self.update_timer.start(5000)
+        self.update_timer.start(2000)
 
+        self.scheduled_updates = QtCore.QTimer()
+        self.scheduled_updates.timeout.connect(self.updateOneFeed)
+        self.scheduled_updates.start(30000)
+
+    def updateOneFeed(self):
+        """Launches an update for the feed that needs it most"""
+        feed = backend.Feed.query.order_by("check_date").limit(1)[0]
+        print feed.check_date
+        # Only check if it has not been checked in at least 10 minutes
+        if (datetime.datetime.now() - feed.check_date).seconds > 600:
+            print  "Scheduled update of: ",feed.xmlurl
+            fetcher_in.put(['update', feed.xmlurl, feed.etag, feed.check_date])
+        
     def get_updates(self):
         try:
             cmd = fetcher_out.get(False) # Don't block
