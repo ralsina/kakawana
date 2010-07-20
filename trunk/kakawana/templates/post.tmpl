@@ -10,7 +10,11 @@
 <a href="cmd://refresh">Refresh</a>&nbsp;|&nbsp;
 <a href="cmd://settings">Settings</a>
 <hr>
-<a href="#{post.url}"><h1>#{post.title}</h1></a>
+<?py if post.title: ?>
+  <a href="#{post.url}"><h1>#{post.title}</h1></a>
+<?py else: ?>
+  <a href="#{post.url}"><h1>No Title</h1></a>
+<?py #end ?>
 Posted at #{utc2local(post.date)} | 
 <a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
 <a href="cmd://star">Star</a>&nbsp;|&nbsp;
