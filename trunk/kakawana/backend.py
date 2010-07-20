@@ -135,6 +135,12 @@ class Post(Entity):
     def __repr__(self):
         return "Post: %s"%self.title
 
+class KeyValue(Entity):
+    """Useful for storing random stuff on a key/value store like
+    if it were a dictionary"""
+    key=Field(Unicode,required=True, primary_key=True)
+    value=Field(Unicode,required=True)
+
 class Tag(Entity):
     """
     A tag we can apply to a feed or post.

@@ -68,6 +68,7 @@ class Main(QtGui.QMainWindow):
         self.mode = 0
         self.showAllFeeds = False
         self.enclosures = []
+        self.feed_properties = None
         # This is always the same
         uifile = os.path.join(
             os.path.abspath(
@@ -81,7 +82,7 @@ class Main(QtGui.QMainWindow):
         self.enclosureLayout = QtGui.QVBoxLayout(self.enclosureContainer)
         self.enclosureContainer.setLayout(self.enclosureLayout)
         self.enclosureContainer.hide()
-        
+
         self.loadFeeds(-1)
 
         self.modes=QtGui.QComboBox()
@@ -348,6 +349,13 @@ class Main(QtGui.QMainWindow):
             _id = fitem._id
         self.loadFeeds(_id)
 
+    def on_actionEdit_Feed_activated(self, b=None):
+        if b is not None: return
+        if not self.feed_properties:
+            from feedproperties import Feed_Properties
+            self.feed_properties = Feed_Properties()
+        self.ui.vsplitter.addWidget(self.feed_properties)
+        self.feed_properties.show()
 
     def on_actionImport_Google_Reader_activated(self, b=None):
         if b is not None: return
