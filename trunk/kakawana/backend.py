@@ -42,7 +42,7 @@ class Feed(Entity):
     '''The URL for the RSS/Atom feed'''
     data = Field(Unicode,required=False)
     '''everything in the feed'''
-    posts = OneToMany("Post")
+    posts = OneToMany("Post", order_by = "-date")
     '''Posts in the feed'''
     etag = Field(Text, default='')
     '''etag of last check'''
