@@ -53,7 +53,9 @@ def fetcher():
             cmd = fetcher_in.get(5)
             if cmd[0] == 'update':
                 print 'Updating:', cmd[1],'...',
-                f=feedparser.parse(cmd[1])
+                f=feedparser.parse(cmd[1],
+                    etag = cmd[2],
+                    modified = cmd[3].timetuple())
                 fetcher_out.put(['updated',cmd[1],f])
                 print 'Done'
         except:
@@ -248,9 +250,10 @@ class Main(QtGui.QMainWindow):
                 unread_count = len(filter(lambda p: not p.read, p.feed.posts))
                 fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
         else: # Feed
-            # FIXME: make this update the feed like google reader
             print 'Sending:', ['update',item._id]
-            fetcher_in.put(['update',item._id])
+            feed = backend.Feed.get_by(xmlurl = item._id)
+            if feed:
+                fetcher_in.put(['update', feed.xmlurl, feed.etag, feed.check_date])
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
