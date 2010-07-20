@@ -48,7 +48,7 @@
         </property>
        </column>
       </widget>
-      <widget class="QSplitter" name="splitter">
+      <widget class="QSplitter" name="vsplitter">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -91,6 +91,15 @@
      <height>24</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuActions">
+    <property name="title">
+     <string>Actions</string>
+    </property>
+    <addaction name="actionImport_Google_Reader"/>
+    <addaction name="actionShow_All_Feeds"/>
+    <addaction name="actionUpdate_Feed"/>
+   </widget>
+   <addaction name="menuActions"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -108,9 +117,7 @@
    <addaction name="separator"/>
    <addaction name="actionPrevious"/>
    <addaction name="actionNext"/>
-   <addaction name="actionUpdate_Feed"/>
-   <addaction name="actionImport_Google_Reader"/>
-   <addaction name="actionShow_All_Feeds"/>
+   <addaction name="actionEdit_Feed"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
@@ -164,6 +171,11 @@
    </property>
    <property name="text">
     <string>Show All Feeds</string>
+   </property>
+  </action>
+  <action name="actionEdit_Feed">
+   <property name="text">
+    <string>Edit Feed</string>
    </property>
   </action>
  </widget>
