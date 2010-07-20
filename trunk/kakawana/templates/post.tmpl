@@ -5,29 +5,34 @@
     <link rel="stylesheet" href="file://#{cssdir}/style.css" type="text/css" media="screen, projection">
 </head>
 <body>
-<div class="headerbox">
+<a href="#{post.feed.url}">#{post.feed.name}</a>
+<hr>
 <a href="#{post.url}"><h1>#{post.title}</h1></a>
-</div>
-<div class="headerbox">
-<b>Date:&nbsp;</b>#{utc2local(post.date)}<br>
-</div>
+Posted at #{utc2local(post.date)} | 
+<a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
+<a href="cmd://star">Star</a>&nbsp;|&nbsp;
+<a href="#{post.url}">Complete Story</a>
+<hr>
 <div style='margin-top: 1em;'>
 #{content}
 <p>
 <?py for enclosure in  data.enclosures: ?>
-  <?py if enclosure.type.startswith('audio'): ?>
-    <audio autobuffer="Yes" controls="controls" src="#{enclosure.href}"></audio><br>
-  <?py #end ?>
-  <?py if enclosure.type.startswith('image'): ?>
-    <img src="#{enclosure.href}"></img><br>
-  <?py #end ?>
-  <?py if enclosure.type.startswith('video'): ?>
-    <video autobuffer="Yes" controls="controls" src="#{enclosure.href}"></video><br>
+  <?py if hasattr(enclosure, 'type'): ?>
+    <?py if enclosure.type.startswith('audio'): ?>
+        <audio autobuffer="Yes" controls="controls" src="#{enclosure.href}"></audio><br>
+    <?py #end ?>
+    <?py if enclosure.type.startswith('image'): ?>
+        <img src="#{enclosure.href}"></img><br>
+    <?py #end ?>
+    <?py if enclosure.type.startswith('video'): ?>
+        <video autobuffer="Yes" controls="controls" src="#{enclosure.href}"></video><br>
+    <?py #end ?>
   <?py #end ?>
   <a href="#{enclosure.href}">Download</a><br>
 <?py #end ?>
-
 <hr>
+<a href="cmd://keep-unread">Keep Unread</a>&nbsp;/&nbsp;
+<a href="cmd://star">Star</a>&nbsp;/&nbsp;
 <a href="#{post.url}">Complete Story</a>
 </div>
 </body>

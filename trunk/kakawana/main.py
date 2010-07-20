@@ -63,6 +63,7 @@ class Main(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.mode = 0
+        self.showAllFeeds = False
         # This is always the same
         uifile = os.path.join(
             os.path.abspath(
@@ -147,15 +148,16 @@ class Main(QtGui.QMainWindow):
         
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
-            fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
-            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
-            fitem._id = feed.xmlurl
-            self.ui.feeds.addTopLevelItem(fitem)
-            if expandedFeedId == feed.xmlurl:
-                fitem.setExpanded(True)
-                
-            for post in feed.posts:
-                pitem=post.createItem(fitem)
+            if self.showAllFeeds or unread_count:
+                fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
+                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+                fitem._id = feed.xmlurl
+                self.ui.feeds.addTopLevelItem(fitem)
+                if expandedFeedId == feed.xmlurl:
+                    fitem.setExpanded(True)
+
+                for post in feed.posts:
+                    pitem=post.createItem(fitem)
 
     def on_feeds_itemClicked(self, item=None):
         if item is None: return
@@ -269,7 +271,7 @@ class Main(QtGui.QMainWindow):
                        surrogate = False)
         backend.saveData()
         f.addPosts(feed=feed)
-        self.loadFeeds()
+        self.loadFeeds(f._id)
 
     def modeChange(self, mode=None):
         #if not isinstance(mode, int):
@@ -289,9 +291,20 @@ class Main(QtGui.QMainWindow):
         if fitem._id in (-1,-2):
             return
         feed_name=' ('.join(unicode(fitem.text(0)).split(' (')[:-1])
-        f= backend.Feed.get_by(name=feed_name)
+        f = backend.Feed.get_by(name=feed_name)
         f.addPosts()
-        self.loadFeeds(fitem._id)
+        self.refreshFeeds()
+
+    def refreshFeeds(self):
+        '''Like a loadFeeds, but always keeps the current one open'''
+        item = self.ui.feeds.currentItem()
+        _id = None
+        if item:
+            fitem = item.parent()
+            if not fitem:
+                fitem = item
+            _id = fitem._id
+        self.loadFeeds(_id)
 
 
     def on_actionImport_Google_Reader_activated(self, b=None):
@@ -330,8 +343,12 @@ class Main(QtGui.QMainWindow):
             f1 = backend.Feed.update_or_create(dict(name = f.title.decode('utf-8'), xmlurl = f.url),
                 surrogate=False)
         backend.saveData()
-        self.loadFeeds()
+        self.refreshFeeds()
 
+    def on_actionShow_All_Feeds_toggled(self, b=None):
+        print 'SAF:', b 
+        self.showAllFeeds = b
+        self.refreshFeeds()
 
 def main():
     # Init the database before doing anything else
