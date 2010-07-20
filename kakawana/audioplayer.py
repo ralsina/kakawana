@@ -12,12 +12,15 @@ class AudioPlayer(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.setSizePolicy(QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Preferred)
-        
+
+
         self.player = Phonon.createPlayer(Phonon.MusicCategory,
              Phonon.MediaSource(url))
         self.player.setTickInterval(100)
         self.player.tick.connect(self.tock)
-        
+
+        self.play_pause = QtGui.QPushButton(self)
+
         self.slider = Phonon.SeekSlider(self.player , self)
         
         self.status = QtGui.QLabel(self)
@@ -28,6 +31,7 @@ class AudioPlayer(QtGui.QWidget):
         self.download.clicked.connect(self.fetch)
         
         layout = QtGui.QHBoxLayout(self)
+        layout.addWidget(self.play_pause)
         layout.addWidget(self.slider)
         layout.addWidget(self.status)
         layout.addWidget(self.download)
