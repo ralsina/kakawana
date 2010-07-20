@@ -58,20 +58,24 @@ class Feed(Entity):
             feed=feedparser.parse(self.xmlurl,
                 etag = self.etag,
                 modified = self.check_date.timetuple())
-            self.check_date = datetime.datetime.now()
-            if feed.status == 304: # No change
-                print "Got 304 on feed update"
-                saveData()
-                return
-            elif feed.status == 301: # Permanent redirect
-                print "Got 301 on feed update => %s"%feed.href
-                self.xmlUrl=feed.href
-            elif feed.status == 410: # Feed deleted. FIXME: tell the user and stop trying!
-                print "Got 410 on feed update"
-                saveData()
-                return
-            if 'etag' in feed:
-                self.etag = feed['etag']
+        self.check_date = datetime.datetime.now()
+        if feed.status == 304: # No change
+            print "Got 304 on feed update"
+            saveData()
+            return
+        elif feed.status == 301: # Permanent redirect
+            print "Got 301 on feed update => %s"%feed.href
+            self.xmlUrl=feed.href
+        elif feed.status == 410: # Feed deleted. FIXME: tell the user and stop trying!
+            print "Got 410 on feed update"
+            saveData()
+            return
+        elif feed.status == 404: # Feed gone. FIXME: tell the user and stop trying!
+            print "Got 404 on feed update"
+            saveData()
+            return
+        if 'etag' in feed:
+            self.etag = feed['etag']
 
         for post in feed['entries']:
             print post.title
@@ -121,7 +125,7 @@ class Post(Entity):
         return p
 
     def createItem(self, fitem):
-        pitem=QtGui.QTreeWidgetItem(fitem,[self.title])
+        pitem=QtGui.QTreeWidgetItem(fitem,[self.title or unicode(self.date)])
         if self.read:
             pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
         else:
