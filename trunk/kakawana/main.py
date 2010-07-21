@@ -85,6 +85,10 @@ class Main(QtGui.QMainWindow):
         self.enclosureContainer.setLayout(self.enclosureLayout)
         self.enclosureContainer.hide()
 
+        # Smart 'Space' that jumps to next post if needed
+        self.addAction(self.ui.actionSpace)
+        
+
         self.loadFeeds(-1)
 
         self.modes=QtGui.QComboBox()
@@ -427,6 +431,29 @@ class Main(QtGui.QMainWindow):
         print 'SAF:', b 
         self.showAllFeeds = b
         self.refreshFeeds()
+
+    def on_actionSpace_activated(self, b=None):
+        '''Scroll down the current post, or jump to the next one'''
+        if b is not None: return
+        frame = self.html.page().mainFrame()
+        if frame.scrollBarMaximum(QtCore.Qt.Vertical) == \
+            frame.scrollPosition().y():
+                self.on_actionNext_Post_activated()
+        else:
+            frame.scroll(0,self.html.height())
+            
+    def on_actionNext_Post_activated(self, b=None):
+        '''Jump to the beginning of the next post'''
+        if b is not None: return
+        item = self.ui.feeds.currentItem()
+        if not item:
+            item = self.ui.feeds.topLevelItem(0)
+        if item:
+            item = self.ui.feeds.itemBelow(item)
+            self.ui.feeds.setCurrentItem(item)
+            self.on_feeds_itemClicked(item)
+            
+        
 
 def main():
     # Init the database before doing anything else
