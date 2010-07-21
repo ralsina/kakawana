@@ -62,9 +62,9 @@ class Feed(Entity):
 
         # Fill in missing things
         if not self.url:
-            if feed['feed']['link']:
+            if 'link' in feed['feed']:
                 self.url = feed['feed']['link']
-            elif feed['feed']['links']:
+            elif 'links' in feed['feed'] and feed['feed']['links']:
                 self.url = feed['feed']['links'][0].href
         # Keep data fresh
         self.data = unicode(pickle.dumps(feed['feed']))
