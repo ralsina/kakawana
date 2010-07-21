@@ -138,9 +138,26 @@ class Main(QtGui.QMainWindow):
             if cmd == 'mark-all-read':
                 print 'Triggering mark-all-read'
                 self.ui.actionMark_All_As_Read.trigger()
-            
+                
+            elif cmd == 'refresh':
+                self.updateCurrentFeed()
+
+            # Post commands
+            elif cmd == 'keep-unread':
+                self.actionKeep_Unread.trigger()
         else:
             QtGui.QDesktopServices.openUrl(url)
+
+    def updateCurrentFeed(self):
+        '''Launches a forced update for the current feed'''
+        item = self.ui.feeds.currentItem()
+        fitem = item.parent()
+        if not fitem:
+            fitem = item
+        feed = backend.Feed.get_by(xmlurl = fitem._id)
+        if feed:
+            print  "Manual update of: ",feed.xmlurl
+            fetcher_in.put(['update', feed.xmlurl, feed.etag, feed.check_date])
 
     def updateOneFeed(self):
         """Launches an update for the feed that needs it most"""
@@ -314,10 +331,7 @@ class Main(QtGui.QMainWindow):
                 unread_count = len(filter(lambda p: not p.read, p.feed.posts))
                 fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
         else: # Feed
-            print 'Sending:', ['update',item._id]
-            feed = backend.Feed.get_by(xmlurl = item._id)
-            if feed:
-                fetcher_in.put(['update', feed.xmlurl, feed.etag, feed.check_date])
+            self.updateCurrentFeed()
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
@@ -382,18 +396,7 @@ class Main(QtGui.QMainWindow):
 
     def on_actionUpdate_Feed_activated(self, b=None):
         if b is not None: return
-
-        # Launch update of current feed
-        item = self.ui.feeds.currentItem()
-        fitem = item.parent()
-        if not fitem:
-            fitem = item
-        if fitem._id in (-1,-2):
-            return
-        feed_name=' ('.join(unicode(fitem.text(0)).split(' (')[:-1])
-        f = backend.Feed.get_by(name=feed_name)
-        f.addPosts()
-        self.refreshFeeds()
+        self.updateCurrentFeed()
 
     def refreshFeeds(self):
         '''Like a loadFeeds, but always keeps the current one open'''
@@ -417,9 +420,9 @@ class Main(QtGui.QMainWindow):
                 fitem = item
             _id = fitem._id
 
-        if not _id: # No feed selected
-            return
         feed = backend.Feed.get_by(xmlurl=_id)
+        if not feed: # No feed selected
+            return
 
         if not self.feed_properties:
             from feedproperties import Feed_Properties
@@ -497,7 +500,16 @@ class Main(QtGui.QMainWindow):
             self.ui.feeds.setCurrentItem(item)
             self.on_feeds_itemClicked(item)
             
-        
+    def on_actionKeep_Unread_activated(self, b=None):
+        '''Mark the current post as unread'''
+        if b is not None: return
+        item = self.ui.feeds.currentItem()
+        if not item.parent(): return # Not a post
+        post = backend.Post.get_by(_id = item._id)
+        if not post: return
+        post.read = False
+        backend.saveData()
+        self.refreshFeeds()
 
 def main():
     # Init the database before doing anything else

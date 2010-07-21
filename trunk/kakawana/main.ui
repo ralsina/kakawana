@@ -101,6 +101,9 @@
     <addaction name="actionImport_Google_Reader"/>
     <addaction name="actionShow_All_Feeds"/>
     <addaction name="actionUpdate_Feed"/>
+    <addaction name="actionMark_All_As_Read"/>
+    <addaction name="actionKeep_Unread"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuActions"/>
   </widget>
@@ -121,7 +124,6 @@
    <addaction name="actionPrevious"/>
    <addaction name="actionNext"/>
    <addaction name="actionEdit_Feed"/>
-   <addaction name="actionMark_All_As_Read"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
@@ -196,6 +198,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionKeep_Unread">
+   <property name="text">
+    <string>Keep Unread</string>
    </property>
   </action>
  </widget>
