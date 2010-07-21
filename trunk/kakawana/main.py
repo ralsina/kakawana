@@ -388,7 +388,7 @@ class Main(QtGui.QMainWindow):
                        name = unicode(feed['feed']['title']), 
                        url = unicode(link),
                        xmlurl = unicode(feed['href']),
-                       data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))
+                       data = unicode(base64.b64encode(pickle.dumps(feed['feed']))),
                        surrogate = False)
         backend.saveData()
         f.addPosts(feed=feed)
