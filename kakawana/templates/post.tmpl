@@ -11,9 +11,9 @@
 <a href="cmd://settings">Settings</a>
 <hr>
 <?py if post.title: ?>
-  <a href="#{post.url}"><h1>#{post.title}</h1></a>
+  <h1><a href="#{post.url}">#{post.title}</a></h1>
 <?py else: ?>
-  <a href="#{post.url}"><h1>No Title</h1></a>
+  <h1><a href="#{post.url}"><h1>No Title</a></h1>
 <?py #end ?>
 Posted at #{utc2local(post.date)} | 
 <a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;

@@ -78,12 +78,12 @@ legend+* { margin-top: 1em; } /*** compensates for the opera margin bug ***/
 textarea, input { padding: .3em .4em .15em .4em; }
 select { padding: .1em .2em 0 .2em; }
 option { padding: 0 .4em; }
-a { position: relative; padding: 0.3em 0 .1em 0; } /*** for larger click-area ***/
 dt { margin-top: .8em; margin-bottom: .4em; }
 ul { margin-left: 1.5em; }
 ol { margin-left: 2.35em; }
 ol ol, ul ol { margin-left: 2.5em; }
 form div { margin-bottom: .8em; }
+a { position: relative; padding: 0.3em 0 .1em 0; } /*** for larger click-area ***/
 
 /*** COLORS ***/
 a:link { text-decoration: none; color: #36c; }
