@@ -318,10 +318,17 @@ class Main(QtGui.QMainWindow):
         # Finally, this is the feed URL
         feed=feeds[items.index(unicode(item))]
 
+        if feed['feed']['link']:
+            link = feed['feed']['link']
+        elif feed['feed']['links']:
+            link = feed['feed']['links'][0].href
+        else:
+            link = url
+
         # Add it to the DB
         f=backend.Feed.update_or_create(dict (
                        name = unicode(feed['feed']['title']), 
-                       url = unicode(feed['feed']['link']),
+                       url = unicode(link),
                        xmlurl = unicode(feed['href']),
                        data = unicode(pickle.dumps(feed['feed']))),
                        surrogate = False)
@@ -384,7 +391,7 @@ class Main(QtGui.QMainWindow):
 
         # get feed and load data into the widget
         self.feed_properties.name.setText(feed.name)
-        self.feed_properties.url.setText(feed.url)
+        self.feed_properties.url.setText(feed.url or '')
         self.feed_properties.xmlurl.setText(feed.xmlurl)
         
         self.feed_properties.show()
@@ -407,8 +414,8 @@ class Main(QtGui.QMainWindow):
 
         if r == QtGui.QDialog.Rejected:
             return
+            
         # Do import
-
         username = unicode(d.username.text())
         password = unicode(d.password.text())
         if d.remember.isChecked():
