@@ -55,10 +55,16 @@ class Feed(Entity):
     def addPosts(self, feed=None):
         '''Takes an optional already parsed feed'''
         self.check_date = datetime.datetime.now()
-        if feed==None:
+        if feed == None:
             feed=feedparser.parse(self.xmlurl,
                 etag = self.etag,
                 modified = self.check_date.timetuple())
+        elif feed == {}:
+            # This was probably a feedparser bug that made the
+            # fetcher crash, so don't try to do much, but
+            # mark as updated anyway
+            saveData()
+            return
 
         # Fill in missing things
         if not self.url:
@@ -148,8 +154,9 @@ class Post(Entity):
 class KeyValue(Entity):
     """Useful for storing random stuff on a key/value store like
     if it were a dictionary"""
-    key=Field(Unicode,required=True, primary_key=True)
-    value=Field(Unicode,required=True)
+    key = Field(Unicode,required=True, primary_key=True)
+    value = Field(Unicode,required=True)
+    timestamp = Field(DateTime, required = True)
 
 class Tag(Entity):
     """

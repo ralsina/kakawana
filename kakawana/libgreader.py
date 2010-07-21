@@ -70,6 +70,7 @@ class GoogleReader(object):
     SUBSCRIPTION_LIST_URL = API_URL + 'subscription/list'
     READING_LIST_URL = API_URL + 'stream/contents/user/-/state/com.google/reading-list'
     UNREAD_COUNT_URL = API_URL + 'unread-count'
+    SUBSCRIPTION_EDIT_URL = API_URL + 'subscription/edit'
 
     def __str__(self):
         return "<Google Reader object: %s>" % self.username
@@ -134,6 +135,13 @@ class GoogleReader(object):
         userJson = self.httpGet(GoogleReader.READING_LIST_URL, {'n':numResults, 'exclude':'read'})
         return json.loads(userJson, strict=False)['items']
 
+    def addFeed(self, title, url):
+        self.httpPost(GoogleReader.SUBSCRIPTION_EDIT_URL, None, {
+            #'t': title,
+            's': "feed/"+url,
+            'ac': u'subscribe',
+            })
+
     def getUserInfo(self):
         """
         Returns a dictionary of user info that google stores.
@@ -155,8 +163,8 @@ class GoogleReader(object):
         """
         return self.auth.get(url, parameters)
 
-    def _httpPost(self, request):
-        pass
+    def httpPost(self, url, parameters, postdata):
+        return self.auth.post(url, parameters, postdata)
 
     def _addFeeds (self, feed):
         self.feedlist.append(feed)
@@ -201,6 +209,30 @@ class ClientAuth(AuthenticationMethod):
         data = r.read()
         r.close()
         return data
+
+    def post(self, url, extraargs, postdata={}):
+        header = {'User-agent' : "Kakawana"}
+        header['Authorization'] = 'GoogleLogin auth=%s' % self.auth_token
+        parameters = {'client':self.client}
+        if extraargs:
+            parameters.update(extraargs)
+        parameters = urllib.urlencode(parameters)
+        postdata['T']=self.auth_token
+        true_data = [ (key, value.encode('utf-8')) for key, value in postdata.iteritems() ]
+        true_data = urllib.urlencode(true_data)
+
+        request = urllib2.Request(url + "?" + parameters, true_data, header)
+        print true_data
+        print url + "?" + parameters
+
+        
+        r = urllib2.urlopen( request )
+        result = r.read()
+
+        print "Result: %s" % result
+
+        return result
+        
 
     def _getAuth(self):
         """
