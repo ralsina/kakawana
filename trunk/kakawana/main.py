@@ -22,6 +22,8 @@ import keyring
 from multiprocessing import Process, Queue
 from audioplayer import AudioPlayer
 from videoplayer import VideoPlayer
+import libgreader as gr
+from reader_client import GoogleReaderClient
 
 VERSION="0.0.1"
 
@@ -61,15 +63,20 @@ def fetcher():
                     f['bozo_exception'] = None
                 fetcher_out.put(['updated',cmd[1],f])
                 print 'Done'
-        except:
-            print 'exception in fetcher'
+        except Exception as e:
+            print 'exception in fetcher:', e
+            fetcher_out.put(['updated',cmd[1],{}])
 
 # Create a class for our main window
 class Main(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
+
+        # Settings
         self.mode = 0
         self.showAllFeeds = False
+        self.keepGoogleSynced = True
+        
         self.enclosures = []
         self.feed_properties = None
         # This is always the same
@@ -399,6 +406,11 @@ class Main(QtGui.QMainWindow):
                        data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))),
                        surrogate = False)
         backend.saveData()
+        if self.keepGoogleSynced:
+            # Add this feed to google reader
+            reader = self.getGoogleReader2()
+            if reader:
+                reader.subscribe_feed(f.xmlurl, f.name)
         f.addPosts(feed=feed)
         self.loadFeeds(f.xmlurl)
 
@@ -453,25 +465,24 @@ class Main(QtGui.QMainWindow):
         
         self.feed_properties.show()
 
-    def on_actionImport_Google_Reader_activated(self, b=None):
-        if b is not None: return
+    def getGoogleReader(self):
+        # FIXME: make this part of a prefs dialog or something
         from google_import import Google_Import
-
         d = Google_Import(parent = self)
         username = keyring.get_password('kakawana', 'google_username') or ''
         password = keyring.get_password('kakawana', 'google_password') or ''
-        
+
         d.username.setText(username)
         d.password.setText(password)
         if username or password:
             d.remember.setChecked(True)
-        
+
         r = d.exec_()
 
 
         if r == QtGui.QDialog.Rejected:
-            return
-            
+            return None
+
         # Do import
         username = unicode(d.username.text())
         password = unicode(d.password.text())
@@ -479,10 +490,45 @@ class Main(QtGui.QMainWindow):
             # Save in appropiate keyring
             keyring.set_password('kakawana','google_username',username)
             keyring.set_password('kakawana','google_password',password)
-        import libgreader as gr
-        
+
         auth = gr.ClientAuth(username, password)
         reader = gr.GoogleReader(auth)
+        return reader
+
+    def getGoogleReader2(self):
+        # FIXME: make this part of a prefs dialog or something
+        from google_import import Google_Import
+        d = Google_Import(parent = self)
+        username = keyring.get_password('kakawana', 'google_username') or ''
+        password = keyring.get_password('kakawana', 'google_password') or ''
+
+        d.username.setText(username)
+        d.password.setText(password)
+        if username or password:
+            d.remember.setChecked(True)
+
+        r = d.exec_()
+
+
+        if r == QtGui.QDialog.Rejected:
+            return None
+
+        # Do import
+        username = unicode(d.username.text())
+        password = unicode(d.password.text())
+        if d.remember.isChecked():
+            # Save in appropiate keyring
+            keyring.set_password('kakawana','google_username',username)
+            keyring.set_password('kakawana','google_password',password)
+
+        reader = GoogleReaderClient(username, password)
+        return reader
+
+
+    def on_actionImport_Google_Reader_activated(self, b=None):
+        if b is not None: return
+        reader = self.getGoogleReader()
+        if not reader: return
         reader.buildSubscriptionList()
         feeds = reader.getFeeds()
         for f in feeds:
@@ -490,6 +536,39 @@ class Main(QtGui.QMainWindow):
                 surrogate=False)
         backend.saveData()
         self.refreshFeeds()
+
+    def on_actionSync_Google_Feeds_activated(self, b=None):
+        if b is not None: return
+        reader = self.getGoogleReader()
+        if not reader: return
+        
+        reader.buildSubscriptionList()
+        g_feeds = reader.getFeeds()
+        # Check what feeds exist in google and not here:
+        new_in_google=[]
+        for f in g_feeds:
+            if not backend.Feed.get_by(xmlurl = f.url):
+                new_in_google.append(f.url)
+        print 'New in Google:', new_in_google
+
+        # Check what feeds exist here and not in google:
+        g_feed_dict={}
+        for f in g_feeds:
+            g_feed_dict[f.url] = f
+        new_here = []
+        for f in backend.Feed.query.all():
+            if f.xmlurl not in g_feed_dict:
+                new_here.append([f.xmlurl, f.name])
+        #print 'New here:', new_here
+        # FIXME: don't aways do this
+        reader = self.getGoogleReader2()
+        if reader:
+            for xmlurl, name in new_here:
+                print 'Adding to google:', name
+                reader.subscribe_feed(xmlurl, name)
+
+        # Check what feeds have been deleted here since last sync:
+
 
     def on_actionShow_All_Feeds_toggled(self, b=None):
         print 'SAF:', b 
@@ -541,4 +620,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

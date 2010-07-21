@@ -124,6 +124,7 @@
    <addaction name="actionPrevious"/>
    <addaction name="actionNext"/>
    <addaction name="actionEdit_Feed"/>
+   <addaction name="actionSync_Google_Feeds"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
@@ -203,6 +204,11 @@
   <action name="actionKeep_Unread">
    <property name="text">
     <string>Keep Unread</string>
+   </property>
+  </action>
+  <action name="actionSync_Google_Feeds">
+   <property name="text">
+    <string>Sync Google Feeds</string>
    </property>
   </action>
  </widget>
