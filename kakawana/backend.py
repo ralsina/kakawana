@@ -59,6 +59,16 @@ class Feed(Entity):
             feed=feedparser.parse(self.xmlurl,
                 etag = self.etag,
                 modified = self.check_date.timetuple())
+
+        # Fill in missing things
+        if not self.url:
+            if feed['feed']['link']:
+                self.url = feed['feed']['link']
+            elif feed['feed']['links']:
+                self.url = feed['feed']['links'][0].href
+        # Keep data fresh
+        self.data = unicode(pickle.dumps(feed['feed']))
+        
         if feed.status == 304: # No change
             print "Got 304 on feed update"
             saveData()
