@@ -281,12 +281,16 @@ class Main(QtGui.QMainWindow):
                 # Feed mode
                 data = pickle.loads(base64.b64decode(p.data))
 
+                content = ''
                 if 'content' in data:
                     content = '<hr>'.join([c.value for c in data['content']])
                 elif 'summary' in data:
                     content = data['summary']
-                elif 'value' in post:
+                elif 'value' in data:
                     content = data['value']
+                else:
+                    print "Can't find content in this entry"
+                    print data
 
                 # Rudimentary NON-html detection
                 if not '<' in content:
