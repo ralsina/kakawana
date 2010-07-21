@@ -140,6 +140,7 @@ class Post(Entity):
         else:
             pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
         pitem._id=self._id
+        return pitem
         
     def __repr__(self):
         return "Post: %s"%self.title
