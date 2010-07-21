@@ -220,6 +220,7 @@ class Main(QtGui.QMainWindow):
         if currentItemId is set, that item will be current (FIXME)
 
         '''
+        scrollTo = None
         feeds=backend.Feed.query.all()
         self.ui.feeds.clear()
         # Add "some recent"
@@ -231,6 +232,7 @@ class Main(QtGui.QMainWindow):
         self.ui.feeds.addTopLevelItem(fitem)
         if expandedFeedId == -1:
             fitem.setExpanded(True)
+            scrollTo = fitem
             
         for post in posts:
             pitem = post.createItem(fitem)
@@ -254,6 +256,7 @@ class Main(QtGui.QMainWindow):
             self.ui.feeds.addTopLevelItem(fitem)
             if expandedFeedId == feed.xmlurl:
                 fitem.setExpanded(True)
+                scrollTo = fitem
             if fitem._id == expandedFeedId or \
                     self.showAllFeeds or unread_count:
                 fitem.setHidden(False)
@@ -264,6 +267,9 @@ class Main(QtGui.QMainWindow):
                 pitem=post.createItem(fitem)
                 if pitem._id == currentItemId:
                     self.ui.feeds.setCurrentItem(pitem)
+                    scrollTo = pitem
+        if scrollTo:
+            self.ui.feeds.scrollToItem(scrollTo)
 
     def on_feeds_itemClicked(self, item=None):
         if item is None: return
@@ -377,20 +383,23 @@ class Main(QtGui.QMainWindow):
         for furl in feedurls:
             print furl
             f=feedparser.parse(furl)
-            feeds.append(f)            
-        items = [ u'%d - %s'%(i,feed['feed']['title']) for i,feed in enumerate(feeds) ]
-        ll=QtCore.QStringList()
-        for i in items:
-            ll.append(QtCore.QString(i))
-        item, ok = QtGui.QInputDialog.getItem(self, 
-            u"Kakawana - New feed", 
-            u"What feed do you prefer for this site?", 
-            ll,
-            editable=False)
-        if not ok:
-            return
-        # Finally, this is the feed URL
-        feed=feeds[items.index(unicode(item))]
+            feeds.append(f)
+        if len(feeds) > 1:
+            items = [ u'%d - %s'%(i,feed['feed']['title']) for i,feed in enumerate(feeds) ]
+            ll=QtCore.QStringList()
+            for i in items:
+                ll.append(QtCore.QString(i))
+            item, ok = QtGui.QInputDialog.getItem(self,
+                u"Kakawana - New feed",
+                u"What feed do you prefer for this site?",
+                ll,
+                editable = False)
+            if not ok:
+                return
+            # Finally, this is the feed URL
+            feed = feeds[items.index(unicode(item))]
+        else:
+            feed = feeds[0]
 
         link = url
         if 'link' in feed['feed']:
