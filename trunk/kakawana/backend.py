@@ -81,7 +81,6 @@ class Feed(Entity):
             print post.title
             p=Post.get_or_create(post)
             self.posts.insert(0,p)
-            saveData()
         saveData()
         
 
