@@ -616,6 +616,30 @@ class Main(QtGui.QMainWindow):
         backend.saveData()
         self.refreshFeeds()
 
+    def on_actionDelete_Feed_activated(self, b=None):
+        '''Unsubscribe from current feed'''
+        if b is not None: return
+        item = self.ui.feeds.currentItem()
+        if item:
+            fitem = item.parent()
+            if not fitem:
+                fitem = item
+            feed = backend.Feed.get_by(xmlurl = fitem._id)
+            if not feed: return
+
+            # Got the current feed, now, must delete it
+            feed.delete()
+            backend.saveData()
+
+            # May need to delete feed from google
+            if self.keepGoogleSynced:
+                # Add this feed to google reader
+                reader = self.getGoogleReader2()
+                if reader:
+                    reader.unsubscribe_feed(fitem._id)
+            self.loadFeeds()
+        
+
 def main():
     # Init the database before doing anything else
     backend.initDB()
