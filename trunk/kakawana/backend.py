@@ -67,7 +67,7 @@ class Feed(Entity):
             elif 'links' in feed['feed'] and feed['feed']['links']:
                 self.url = feed['feed']['links'][0].href
         # Keep data fresh
-        self.data = unicode(pickle.dumps(feed['feed']))
+        self.data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))
         
         if feed.status == 304: # No change
             print "Got 304 on feed update"

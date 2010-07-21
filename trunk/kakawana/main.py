@@ -377,23 +377,22 @@ class Main(QtGui.QMainWindow):
         # Finally, this is the feed URL
         feed=feeds[items.index(unicode(item))]
 
+        link = url
         if 'link' in feed['feed']:
             self.url = feed['feed']['link']
         elif 'links' in feed['feed'] and feed['feed']['links']:
             self.url = feed['feed']['links'][0].href
-        else:
-            link = url
 
         # Add it to the DB
         f=backend.Feed.update_or_create(dict (
                        name = unicode(feed['feed']['title']), 
                        url = unicode(link),
                        xmlurl = unicode(feed['href']),
-                       data = unicode(pickle.dumps(feed['feed']))),
+                       data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))
                        surrogate = False)
         backend.saveData()
         f.addPosts(feed=feed)
-        self.loadFeeds(f._id)
+        self.loadFeeds(f.xmlurl)
 
     def modeChange(self, mode=None):
         #if not isinstance(mode, int):
