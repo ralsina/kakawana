@@ -311,7 +311,7 @@ class Main(QtGui.QMainWindow):
             # Enclosures
             for enclosure in self.enclosures:
                 enclosure.hide()
-                enclosure.delete()
+                enclosure.deleteLater()
             self.enclosures=[]
             for e in data.enclosures:
                 if hasattr(e,'type'):
