@@ -118,6 +118,7 @@
    <addaction name="actionPrevious"/>
    <addaction name="actionNext"/>
    <addaction name="actionEdit_Feed"/>
+   <addaction name="actionSpace"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
@@ -176,6 +177,14 @@
   <action name="actionEdit_Feed">
    <property name="text">
     <string>Edit Feed</string>
+   </property>
+  </action>
+  <action name="actionSpace">
+   <property name="text">
+    <string>Space</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
    </property>
   </action>
  </widget>
