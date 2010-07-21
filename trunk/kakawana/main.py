@@ -56,6 +56,8 @@ def fetcher():
                 f=feedparser.parse(cmd[1],
                     etag = cmd[2],
                     modified = cmd[3].timetuple())
+                if 'bozo_exception' in f:
+                    f['bozo_exception'] = None
                 fetcher_out.put(['updated',cmd[1],f])
                 print 'Done'
         except:
@@ -141,6 +143,10 @@ class Main(QtGui.QMainWindow):
                 unread_count = len(filter(lambda p: not p.read, feed.posts))
                 fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
                 fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+                if self.showAllFeeds or unread_count:
+                    fitem.setHidden(False)
+                else:
+                    fitem.setHidden(True)
 
     def loadFeeds(self, expandedFeedId=None):
         feeds=backend.Feed.query.all()
@@ -171,16 +177,19 @@ class Main(QtGui.QMainWindow):
         
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
+            fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
+            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+            fitem._id = feed.xmlurl
+            self.ui.feeds.addTopLevelItem(fitem)
+            if expandedFeedId == feed.xmlurl:
+                fitem.setExpanded(True)
             if self.showAllFeeds or unread_count:
-                fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
-                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
-                fitem._id = feed.xmlurl
-                self.ui.feeds.addTopLevelItem(fitem)
-                if expandedFeedId == feed.xmlurl:
-                    fitem.setExpanded(True)
+                fitem.setHidden(False)
+            else:
+                fitem.setHidden(True)
 
-                for post in feed.posts:
-                    pitem=post.createItem(fitem)
+            for post in feed.posts:
+                pitem=post.createItem(fitem)
 
     def on_feeds_itemClicked(self, item=None):
         if item is None: return
@@ -351,10 +360,29 @@ class Main(QtGui.QMainWindow):
 
     def on_actionEdit_Feed_activated(self, b=None):
         if b is not None: return
+
+        item = self.ui.feeds.currentItem()
+        _id = None
+        if item:
+            fitem = item.parent()
+            if not fitem:
+                fitem = item
+            _id = fitem._id
+
+        if not _id: # No feed selected
+            return
+        feed = backend.Feed.get_by(xmlurl=_id)
+
         if not self.feed_properties:
             from feedproperties import Feed_Properties
             self.feed_properties = Feed_Properties()
         self.ui.vsplitter.addWidget(self.feed_properties)
+
+        # get feed and load data into the widget
+        self.feed_properties.name.setText(feed.name)
+        self.feed_properties.url.setText(feed.url)
+        self.feed_properties.xmlurl.setText(feed.xmlurl)
+        
         self.feed_properties.show()
 
     def on_actionImport_Google_Reader_activated(self, b=None):

@@ -54,11 +54,11 @@ class Feed(Entity):
 
     def addPosts(self, feed=None):
         '''Takes an optional already parsed feed'''
+        self.check_date = datetime.datetime.now()
         if feed==None:
             feed=feedparser.parse(self.xmlurl,
                 etag = self.etag,
                 modified = self.check_date.timetuple())
-        self.check_date = datetime.datetime.now()
         if feed.status == 304: # No change
             print "Got 304 on feed update"
             saveData()
