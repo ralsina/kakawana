@@ -21,6 +21,7 @@ import codecs
 import keyring
 from multiprocessing import Process, Queue
 from audioplayer import AudioPlayer
+from videoplayer import VideoPlayer
 
 VERSION="0.0.1"
 
@@ -316,11 +317,14 @@ class Main(QtGui.QMainWindow):
             for e in data.enclosures:
                 if hasattr(e,'type'):
                     if e.type.startswith('audio'):
-                        player = AudioPlayer(e.href,
-                            self.enclosureContainer)
-                        player.show()
-                        self.enclosures.append(player)
-                        self.enclosureLayout.addWidget(player)
+                        cls = AudioPlayer
+                    elif e.type.startswith('video'):
+                        cls = VideoPlayer
+                    player = cls(e.href,
+                        self.enclosureContainer)
+                    player.show()
+                    self.enclosures.append(player)
+                    self.enclosureLayout.addWidget(player)
             if self.enclosures:
                 self.enclosureContainer.show()
             else:
