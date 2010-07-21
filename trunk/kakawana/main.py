@@ -318,10 +318,10 @@ class Main(QtGui.QMainWindow):
         # Finally, this is the feed URL
         feed=feeds[items.index(unicode(item))]
 
-        if feed['feed']['link']:
-            link = feed['feed']['link']
-        elif feed['feed']['links']:
-            link = feed['feed']['links'][0].href
+        if 'link' in feed['feed']:
+            self.url = feed['feed']['link']
+        elif 'links' in feed['feed'] and feed['feed']['links']:
+            self.url = feed['feed']['links'][0].href
         else:
             link = url
 
