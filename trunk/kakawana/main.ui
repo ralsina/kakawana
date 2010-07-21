@@ -121,6 +121,7 @@
    <addaction name="actionPrevious"/>
    <addaction name="actionNext"/>
    <addaction name="actionEdit_Feed"/>
+   <addaction name="actionMark_All_As_Read"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
@@ -187,6 +188,14 @@
    </property>
    <property name="shortcut">
     <string>Space</string>
+   </property>
+  </action>
+  <action name="actionMark_All_As_Read">
+   <property name="text">
+    <string>Mark All As Read</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>
