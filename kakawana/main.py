@@ -221,7 +221,7 @@ class Main(QtGui.QMainWindow):
 
         '''
         scrollTo = None
-        feeds=backend.Feed.query.all()
+        feeds=backend.Feed.query.order_by('name').all()
         self.ui.feeds.clear()
         # Add "some recent"
         posts =  backend.Post.query.filter(backend.Post.read==False).\
