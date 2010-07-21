@@ -118,7 +118,6 @@
    <addaction name="actionPrevious"/>
    <addaction name="actionNext"/>
    <addaction name="actionEdit_Feed"/>
-   <addaction name="actionSpace"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
