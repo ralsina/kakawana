@@ -205,7 +205,13 @@ class Main(QtGui.QMainWindow):
                 else:
                     fitem.setHidden(True)
 
-    def loadFeeds(self, expandedFeedId=None):
+    def loadFeeds(self, expandedFeedId=None, currentItemId=None):
+        '''Creates all items for feeds and posts.
+
+        If expandedFeedId is set, that feed's item will be expanded.
+        if currentItemId is set, that item will be current (FIXME)
+
+        '''
         feeds=backend.Feed.query.all()
         self.ui.feeds.clear()
         # Add "some recent"
@@ -248,6 +254,8 @@ class Main(QtGui.QMainWindow):
 
             for post in feed.posts:
                 pitem=post.createItem(fitem)
+                if pitem._id == currentItemId:
+                    self.ui.feeds.setCurrentItem(pitem)
 
     def on_feeds_itemClicked(self, item=None):
         if item is None: return
@@ -402,12 +410,14 @@ class Main(QtGui.QMainWindow):
         '''Like a loadFeeds, but always keeps the current one open'''
         item = self.ui.feeds.currentItem()
         _id = None
+        _pid = None
         if item:
             fitem = item.parent()
+            _pid = item._id
             if not fitem:
                 fitem = item
             _id = fitem._id
-        self.loadFeeds(_id)
+        self.loadFeeds(_id, currentItemId = _pid)
 
     def on_actionEdit_Feed_activated(self, b=None):
         if b is not None: return
