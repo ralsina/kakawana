@@ -110,8 +110,37 @@ class Main(QtGui.QMainWindow):
         self.scheduled_updates.timeout.connect(self.updateOneFeed)
         self.scheduled_updates.start(30000)
 
+    def on_actionMark_All_As_Read_triggered(self, b=None):
+        '''Mark all visible posts in the current feed as read'''
+        if b is not None: return
+        print 'Marking feed as Read'
+        item = self.ui.feeds.currentItem()
+        fitem = item.parent()
+        if not fitem:
+            fitem = item
+        if fitem._id in (-1,-2):
+            return
+        for i in range(fitem.childCount()):
+            _id=fitem.child(i)._id
+            if _id:
+                post = backend.Post.get_by(_id=_id)
+                post.read = True
+        backend.saveData()
+        self.refreshFeeds()
+
     def linkClicked(self,url):
-        QtGui.QDesktopServices.openUrl(url)
+        if unicode(url.scheme()) == 'cmd':
+            # These are fake URLs that trigger kakawana's actions
+            cmd = unicode(url.host()).lower()
+            print 'COMMAND:', cmd # This is the action name
+
+            # Feed commands
+            if cmd == 'mark-all-read':
+                print 'Triggering mark-all-read'
+                self.ui.actionMark_All_As_Read.trigger()
+            
+        else:
+            QtGui.QDesktopServices.openUrl(url)
 
     def updateOneFeed(self):
         """Launches an update for the feed that needs it most"""
@@ -152,7 +181,9 @@ class Main(QtGui.QMainWindow):
                 unread_count = len(filter(lambda p: not p.read, feed.posts))
                 fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
                 fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
-                if self.showAllFeeds or unread_count:
+                if self.ui.feeds.currentItem() == fitem or \
+                        self.showAllFeeds or \
+                        unread_count:
                     fitem.setHidden(False)
                 else:
                     fitem.setHidden(True)
@@ -192,7 +223,8 @@ class Main(QtGui.QMainWindow):
             self.ui.feeds.addTopLevelItem(fitem)
             if expandedFeedId == feed.xmlurl:
                 fitem.setExpanded(True)
-            if self.showAllFeeds or unread_count:
+            if fitem._id == expandedFeedId or \
+                    self.showAllFeeds or unread_count:
                 fitem.setHidden(False)
             else:
                 fitem.setHidden(True)
