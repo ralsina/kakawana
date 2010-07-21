@@ -87,7 +87,9 @@ class Main(QtGui.QMainWindow):
 
         # Smart 'Space' that jumps to next post if needed
         self.addAction(self.ui.actionSpace)
-        
+
+        self.ui.html.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateExternalLinks)
+        self.ui.html.page().linkClicked.connect(self.linkClicked)
 
         self.loadFeeds(-1)
 
@@ -107,6 +109,9 @@ class Main(QtGui.QMainWindow):
         self.scheduled_updates = QtCore.QTimer()
         self.scheduled_updates.timeout.connect(self.updateOneFeed)
         self.scheduled_updates.start(30000)
+
+    def linkClicked(self,url):
+        QtGui.QDesktopServices.openUrl(url)
 
     def updateOneFeed(self):
         """Launches an update for the feed that needs it most"""
