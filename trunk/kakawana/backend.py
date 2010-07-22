@@ -94,9 +94,8 @@ class Feed(Entity):
             self.etag = feed['etag']
 
         for post in feed['entries']:
-            print post.title
             p=Post.get_or_create(post)
-            self.posts.insert(0,p)
+            self.posts.append(p)
         saveData()
         
 
