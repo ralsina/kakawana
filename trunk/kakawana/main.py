@@ -207,7 +207,7 @@ class Main(QtGui.QMainWindow):
                     # If it's not there, add it
                     if post._id not in existing:
                         pitem=post.createItem(None)
-                        fitem.inserChild(0, pitem)
+                        fitem.insertChild(0, pitem)
                 unread_count = len(filter(lambda p: not p.read, feed.posts))
                 fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
                 fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
