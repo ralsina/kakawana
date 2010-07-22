@@ -67,6 +67,14 @@ def fetcher():
                     f['bozo_exception'] = None
                 fetcher_out.put(['updated',cmd[1],f])
                 print 'Done'
+            elif cmd[0] == 'add':
+                print 'Adding:', cmd[1],'...'
+                f=feedparser.parse(cmd[1])
+                if 'bozo_exception' in f:
+                    f['bozo_exception'] = None
+                fetcher_out.put(['added',cmd[1],f])
+                print 'Done'
+                
         except Exception as e:
             print 'exception in fetcher:', e
             fetcher_out.put(['updated',cmd[1],{}])
@@ -194,6 +202,18 @@ class Main(QtGui.QMainWindow):
             if feed:
                 feed.addPosts(cmd[2])
                 self.updateFeed(xmlurl)
+        elif cmd[0] == 'added':
+            print 'Adding feed to DB'
+            xmlurl = cmd[1]
+            feed_data = cmd[2]
+            f = backend.Feed.createFromFPData(xmlurl, feed_data)
+            if self.keepGoogleSynced:
+                # Add this feed to google reader
+                reader = self.getGoogleReader2()
+                if reader:
+                    reader.subscribe_feed(f.xmlurl, f.name)
+            f.addPosts(feed_data)
+            self.updateFeed(f.xmlurl)
 
     def updateFeed(self, feed_id):
         # feed_id is a Feed.xmlurl, which is also item._id
@@ -417,21 +437,8 @@ class Main(QtGui.QMainWindow):
             feed = feeds[items.index(unicode(item))]
         else:
             feed = feeds[0]
-
-        link = url
-        if 'link' in feed['feed']:
-            self.url = feed['feed']['link']
-        elif 'links' in feed['feed'] and feed['feed']['links']:
-            self.url = feed['feed']['links'][0].href
-
-        # Add it to the DB
-        f=backend.Feed.update_or_create(dict (
-                       name = unicode(feed['feed']['title']), 
-                       url = unicode(link),
-                       xmlurl = unicode(feed['href']),
-                       data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))),
-                       surrogate = False)
-        backend.saveData()
+        f = backend.Feed.createFromFPData(url, feed)
+        
         if self.keepGoogleSynced:
             # Add this feed to google reader
             reader = self.getGoogleReader2()
@@ -552,6 +559,9 @@ class Main(QtGui.QMainWindow):
 
     def on_actionSync_Google_Feeds_activated(self, b=None):
         if b is not None: return
+
+        print 'Syncing google feed subscriptions'
+        
         reader = self.getGoogleReader()
         if not reader: return
         
@@ -559,10 +569,14 @@ class Main(QtGui.QMainWindow):
         g_feeds = reader.getFeeds()
         # Check what feeds exist in google and not here:
         new_in_google=[]
+        print g_feeds
         for f in g_feeds:
+            print f.url, type(backend.Feed.get_by(xmlurl = f.url))
             if not backend.Feed.get_by(xmlurl = f.url):
                 new_in_google.append(f.url)
-        print 'New in Google:', new_in_google
+                # Add it to the DB via fetcher
+                fetcher_in.put(['add',f.url])
+        print 'New in Google: %d feeds'%len(new_in_google)
 
         # Check what feeds exist here and not in google:
         g_feed_dict={}
