@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """A simple backend for kakawana, using Elixir"""
+VERSION="0.0.1"
 
 import os
+import re
 from elixir import *
 import feedparser
 import pickle, base64
 import datetime, time
-VERSION="0.0.1"
-
 # Import Qt modules
 from PyQt4 import QtCore, QtGui, QtWebKit
 
@@ -16,6 +16,10 @@ feedparser.USER_AGENT = 'Kakawana/%s +http://kakawana.googlecode.com/'%VERSION
 
 dbdir=os.path.join(os.path.expanduser("~"),".kakawana")
 dbfile=os.path.join(dbdir,"kakawana.sqlite")
+
+def h2t(value):
+    "Return the given HTML with all tags stripped."
+    return re.sub(r'<[^>]*?>', '', value)
 
 # It's good policy to have your app use a hidden folder in 
 # the user's home to store its files. That way, you can 
@@ -139,7 +143,7 @@ class Post(Entity):
         return p
 
     def createItem(self, fitem):
-        pitem=QtGui.QTreeWidgetItem(fitem,[self.title or unicode(self.date)])
+        pitem=QtGui.QTreeWidgetItem(fitem,[h2t(self.title) or unicode(self.date)])
         if self.read:
             pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
         else:

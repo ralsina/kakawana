@@ -2,7 +2,7 @@
 
 """The user interface for our app"""
 
-import os, sys, hashlib
+import os, sys, hashlib, re
 from pprint import pprint
 
 # Import Qt modules
@@ -24,6 +24,10 @@ from audioplayer import AudioPlayer
 from videoplayer import VideoPlayer
 import libgreader as gr
 from reader_client import GoogleReaderClient
+
+def h2t(value):
+    "Return the given HTML with all tags stripped."
+    return re.sub(r'<[^>]*?>', '', value)
 
 VERSION="0.0.1"
 
@@ -205,7 +209,8 @@ class Main(QtGui.QMainWindow):
                 posts = feed.posts[::-1]
                 for post in posts:
                     # If it's not there, add it
-                    if post._id not in existing:
+                    if post._id not in existing and (
+                            post.read == False or self.showAllPosts):
                         pitem=post.createItem(None)
                         fitem.insertChild(0, pitem)
                 unread_count = len(filter(lambda p: not p.read, feed.posts))
@@ -255,7 +260,7 @@ class Main(QtGui.QMainWindow):
         
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
-            fitem=QtGui.QTreeWidgetItem(['%s (%d)'%(feed.name,unread_count)])
+            fitem=QtGui.QTreeWidgetItem([h2t('%s (%d)'%(feed.name,unread_count))])
             fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
             fitem._id = feed.xmlurl
             self.ui.feeds.addTopLevelItem(fitem)
