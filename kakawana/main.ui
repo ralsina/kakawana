@@ -120,6 +120,7 @@
     <property name="title">
      <string>Feed</string>
     </property>
+    <addaction name="actionNew_Feed"/>
     <addaction name="actionMark_All_As_Read"/>
     <addaction name="actionUpdate_Feed"/>
     <addaction name="separator"/>
