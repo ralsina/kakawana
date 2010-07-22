@@ -174,12 +174,13 @@ class Main(QtGui.QMainWindow):
 
     def updateOneFeed(self):
         """Launches an update for the feed that needs it most"""
-        feed = backend.Feed.query.order_by("check_date").limit(1)[0]
-        print feed.check_date
-        # Only check if it has not been checked in at least 10 minutes
-        if (datetime.datetime.now() - feed.check_date).seconds > 600:
-            print  "Scheduled update of: ",feed.xmlurl
-            fetcher_in.put(['update', feed.xmlurl, feed.etag, feed.check_date])
+        feeds = backend.Feed.query.order_by("check_date").limit(1) 
+        if feeds: feed = [0]
+            print feed.check_date
+            # Only check if it has not been checked in at least 10 minutes
+            if (datetime.datetime.now() - feed.check_date).seconds > 600:
+                print  "Scheduled update of: ",feed.xmlurl
+                fetcher_in.put(['update', feed.xmlurl, feed.etag, feed.check_date])
         
     def get_updates(self):
         try:
@@ -489,8 +490,8 @@ class Main(QtGui.QMainWindow):
         
         self.feed_properties.show()
 
-    def getGoogleReader(self):
-        # FIXME: make this part of a prefs dialog or something
+    def on_actionConfigure_Google_Account_activated(self, b=None):
+        if b is not None: return
         from google_import import Google_Import
         d = Google_Import(parent = self)
         username = keyring.get_password('kakawana', 'google_username') or ''
@@ -500,54 +501,41 @@ class Main(QtGui.QMainWindow):
         d.password.setText(password)
         if username or password:
             d.remember.setChecked(True)
-
         r = d.exec_()
-
-
         if r == QtGui.QDialog.Rejected:
             return None
-
-        # Do import
         username = unicode(d.username.text())
         password = unicode(d.password.text())
         if d.remember.isChecked():
             # Save in appropiate keyring
             keyring.set_password('kakawana','google_username',username)
             keyring.set_password('kakawana','google_password',password)
+        return username, password
 
-        auth = gr.ClientAuth(username, password)
-        reader = gr.GoogleReader(auth)
+    def getGoogleReader(self):
+        reader = None
+        if self.keepGoogleSynced:
+            username = keyring.get_password('kakawana', 'google_username') or ''
+            password = keyring.get_password('kakawana', 'google_password') or ''
+            if not username or not password:
+                # Show config dialog
+                username, password = on_actionConfigure_Google_Account_activated()
+            if username and password:
+                auth = gr.ClientAuth(username, password)
+                reader = gr.GoogleReader(auth)
         return reader
 
     def getGoogleReader2(self):
-        # FIXME: make this part of a prefs dialog or something
-        from google_import import Google_Import
-        d = Google_Import(parent = self)
-        username = keyring.get_password('kakawana', 'google_username') or ''
-        password = keyring.get_password('kakawana', 'google_password') or ''
-
-        d.username.setText(username)
-        d.password.setText(password)
-        if username or password:
-            d.remember.setChecked(True)
-
-        r = d.exec_()
-
-
-        if r == QtGui.QDialog.Rejected:
-            return None
-
-        # Do import
-        username = unicode(d.username.text())
-        password = unicode(d.password.text())
-        if d.remember.isChecked():
-            # Save in appropiate keyring
-            keyring.set_password('kakawana','google_username',username)
-            keyring.set_password('kakawana','google_password',password)
-
-        reader = GoogleReaderClient(username, password)
+        reader = None
+        if self.keepGoogleSynced:
+            username = keyring.get_password('kakawana', 'google_username') or ''
+            password = keyring.get_password('kakawana', 'google_password') or ''
+            if not username or not password:
+                # Show config dialog
+                username, password = on_actionConfigure_Google_Account_activated()
+            if username and password:
+                reader = GoogleReaderClient(username, password)
         return reader
-
 
     def on_actionImport_Google_Reader_activated(self, b=None):
         if b is not None: return
