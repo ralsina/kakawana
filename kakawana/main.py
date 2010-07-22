@@ -170,15 +170,36 @@ class Main(QtGui.QMainWindow):
             QtGui.QDesktopServices.openUrl(url)
 
     def updateCurrentFeed(self):
-        '''Launches a forced update for the current feed'''
+        '''Launches a forced update for the current feed.
+
+        If it's a real feed, the update is queued.
+        If it's a meta feed, the update is immediate.
+
+        '''
         item = self.ui.feeds.currentItem()
         fitem = item.parent()
         if not fitem:
             fitem = item
-        feed = backend.Feed.get_by(xmlurl = fitem._id)
-        if feed:
-            print  "Manual update of: ",feed.xmlurl
-            fetcher_in.put(['update', feed.xmlurl, feed.etag, feed.check_date])
+        if fitem._id == -1: # Recent posts, do it now
+            existing = set()
+            for j in range (fitem.childCount()):
+                existing.add(fitem.child(j)._id)
+
+            posts =  backend.Post.query.filter(backend.Post.read==False).\
+                order_by("date desc").limit(10).all()
+            for post in posts[::-1]:
+                if post._id not in existing and ((not post.read)
+                        or self.showAllPosts):
+                    pitem = post.createItem(None)
+                    fitem.insertChild(0,pitem)
+                    
+        elif fitem._id == -2: # Starred
+            pass
+        else: # Plain feed, do it non-blocking
+            feed = backend.Feed.get_by(xmlurl = fitem._id)
+            if feed:
+                print  "Manual update of: ",feed.xmlurl
+                fetcher_in.put(['update', feed.xmlurl, feed.etag, feed.check_date])
 
     def updateOneFeed(self):
         """Launches an update for the feed that needs it most"""
@@ -267,8 +288,8 @@ class Main(QtGui.QMainWindow):
         feeds=backend.Feed.query.order_by('name').all()
         self.ui.feeds.clear()
         # Add "some recent"
-        posts =  backend.Post.query.filter(backend.Post.read==False).\
-            order_by("date desc").limit(50)
+        #posts =  backend.Post.query.filter(backend.Post.read==False).\
+            #order_by("date desc").limit(50)
         fitem = QtGui.QTreeWidgetItem(["Recent"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -1
@@ -277,10 +298,10 @@ class Main(QtGui.QMainWindow):
             fitem.setExpanded(True)
             scrollTo = fitem
             
-        for post in posts:
-            pitem = post.createItem(fitem)
+        #for post in posts:
+            #pitem = post.createItem(fitem)
 
-        posts = backend.Post.query.filter(backend.Post.star==True)
+        #posts = backend.Post.query.filter(backend.Post.star==True)
         fitem = QtGui.QTreeWidgetItem(["Starred"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -2
@@ -288,8 +309,8 @@ class Main(QtGui.QMainWindow):
         if expandedFeedId == -2:
             fitem.setExpanded(True)
             
-        for post in posts:
-            pitem=post.createItem(fitem)
+        #for post in posts:
+            #pitem=post.createItem(fitem)
         
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
@@ -400,11 +421,7 @@ class Main(QtGui.QMainWindow):
             item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
 
             # Update unread count
-            if fitem._id in (-1, -2): # Not real feeds
-                # Find the real one
-                fitem = self.findFeedItem(p.feed.xmlurl)
-            unread_count = len(filter(lambda p: not p.read, p.feed.posts))
-            fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
+            self.updateFeed(p.feed.xmlurl)
         else: # Feed
             self.updateCurrentFeed()
             if not item.isExpanded():
