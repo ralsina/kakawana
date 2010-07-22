@@ -169,6 +169,20 @@ class Main(QtGui.QMainWindow):
         else:
             QtGui.QDesktopServices.openUrl(url)
 
+    def updateRecentFeed(self):
+        '''Updates the 'recent posts' feed'''
+        fitem = self.findFeedItem(-1)
+        existing = set()
+        for j in range (fitem.childCount()):
+            existing.add(fitem.child(j)._id)
+        posts =  backend.Post.query.filter(backend.Post.read==False).\
+            order_by("date desc").limit(10).all()
+        for post in posts[::-1]:
+            if post._id not in existing and ((not post.read)
+                    or self.showAllPosts):
+                pitem = post.createItem(None)
+                fitem.insertChild(0,pitem)
+
     def updateCurrentFeed(self):
         '''Launches a forced update for the current feed.
 
@@ -181,18 +195,8 @@ class Main(QtGui.QMainWindow):
         if not fitem:
             fitem = item
         if fitem._id == -1: # Recent posts, do it now
-            existing = set()
-            for j in range (fitem.childCount()):
-                existing.add(fitem.child(j)._id)
-
-            posts =  backend.Post.query.filter(backend.Post.read==False).\
-                order_by("date desc").limit(10).all()
-            for post in posts[::-1]:
-                if post._id not in existing and ((not post.read)
-                        or self.showAllPosts):
-                    pitem = post.createItem(None)
-                    fitem.insertChild(0,pitem)
-                    
+            self.updateRecentFeed()
+            
         elif fitem._id == -2: # Starred
             pass
         else: # Plain feed, do it non-blocking
@@ -236,6 +240,17 @@ class Main(QtGui.QMainWindow):
             f.addPosts(feed_data)
             self.updateFeed(f.xmlurl)
 
+    def findPostItem(self, post):
+        '''Given a post, returns the item where this post is displayed.
+        This is the item at feed->post not one in recent or other places.
+        Those are generated dynamically when the pseudofeed opens.
+        '''
+        fitem = self.findFeedItem(post.feed.xmlurl)
+        for i in range(fitem.childCount()):
+            if fitem.child(i)._id == post._id:
+                return fitem.child(i)
+        return None
+
     def findFeedItem(self, feed_id):
         for i in range(self.ui.feeds.topLevelItemCount()):
             fitem = self.ui.feeds.topLevelItem(i)
@@ -267,7 +282,8 @@ class Main(QtGui.QMainWindow):
             fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
             if self.ui.feeds.currentItem() == fitem or \
                     self.showAllFeeds or \
-                    unread_count:
+                    unread_count or\
+                    self.ui.feeds.currentItem().parent() == fitem:
                 fitem.setHidden(False)
             else:
                 fitem.setHidden(True)
@@ -418,8 +434,10 @@ class Main(QtGui.QMainWindow):
             
             p.read=True
             backend.saveData()
-            item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
-
+            if fitem._id != p.feed.xmlurl: # Marking as read not from the post's feed
+                item = self.findPostItem(p)
+            if item:
+                item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
             # Update unread count
             self.updateFeed(p.feed.xmlurl)
         else: # Feed
@@ -427,6 +445,7 @@ class Main(QtGui.QMainWindow):
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
+        # FIXME: should hide read items if they shouldn't be displayed
 
     def on_actionNew_Feed_triggered(self, b=None):
         '''Ask for site or feed URL and add it to backend'''
