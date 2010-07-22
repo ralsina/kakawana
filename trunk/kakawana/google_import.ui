@@ -96,7 +96,7 @@
      <item>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string>&amp;Import</string>
+        <string>&amp;Done</string>
        </property>
       </widget>
      </item>

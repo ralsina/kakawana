@@ -126,6 +126,7 @@
    <addaction name="actionNext"/>
    <addaction name="actionEdit_Feed"/>
    <addaction name="actionSync_Google_Feeds"/>
+   <addaction name="actionConfigure_Google_Account"/>
   </widget>
   <action name="actionNext">
    <property name="icon">
@@ -218,6 +219,11 @@
    </property>
    <property name="text">
     <string>Show All Posts</string>
+   </property>
+  </action>
+  <action name="actionConfigure_Google_Account">
+   <property name="text">
+    <string>Configure Google Account</string>
    </property>
   </action>
  </widget>
