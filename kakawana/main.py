@@ -235,8 +235,11 @@ class Main(QtGui.QMainWindow):
             f = backend.Feed.createFromFPData(xmlurl, feed_data)
             if self.keepGoogleSynced:
                 # Add this feed to google reader
+                # FIXME: what if the feed is already subscribed in google?
+                
                 reader = self.getGoogleReader2()
                 if reader:
+                    print 'Adding to google:', f.xmlurl, f.name
                     reader.subscribe_feed(f.xmlurl, f.name)
             f.addPosts(feed_data)
             self.updateFeed(f.xmlurl)
@@ -359,6 +362,7 @@ class Main(QtGui.QMainWindow):
         fitem = item.parent()
         if fitem: # Post
             p=backend.Post.get_by(_id=item._id)
+            data = pickle.loads(base64.b64decode(p.data))
 
             # We display differently depending on current mode
             # The modes are:
@@ -375,7 +379,6 @@ class Main(QtGui.QMainWindow):
                 self.ui.html.load(QtCore.QUrl(p.url))
             elif self.mode == 2:
                 # Feed mode
-                data = pickle.loads(base64.b64decode(p.data))
 
                 content = ''
                 if 'content' in data:
@@ -462,11 +465,9 @@ class Main(QtGui.QMainWindow):
         if not r:
             return
         url=unicode(url)
-        print url
         feeds=[]
         feedurls=feedfinder.feeds(url)
         for furl in feedurls:
-            print furl
             f=feedparser.parse(furl)
             feeds.append(f)
         if len(feeds) > 1:
@@ -493,8 +494,8 @@ class Main(QtGui.QMainWindow):
             # Add this feed to google reader
             reader = self.getGoogleReader2()
             if reader:
+                print 'Adding to google:', f.xmlurl, f.name
                 reader.subscribe_feed(f.xmlurl, f.name)
-        
 
     def modeChange(self, mode=None):
         #if not isinstance(mode, int):
@@ -640,7 +641,6 @@ class Main(QtGui.QMainWindow):
         reader = self.getGoogleReader2()
         if reader:
             for xmlurl, name in new_here:
-                print 'Adding to google:', name
                 reader.subscribe_feed(xmlurl, name)
 
         # Check what feeds have been deleted here since last sync:
