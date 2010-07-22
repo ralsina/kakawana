@@ -15,7 +15,10 @@ from PyQt4 import QtCore, QtGui, QtWebKit
 
 feedparser.USER_AGENT = 'Kakawana/%s +http://kakawana.googlecode.com/'%VERSION
 
-dbdir=os.path.join(os.path.expanduser("~"),".kakawana")
+if 'KW_DBDIR' in os.environ:
+    dbdir=os.environ['KW_DBDIR']
+else:
+    dbdir=os.path.join(os.path.expanduser("~"),".kakawana")
 dbfile=os.path.join(dbdir,"kakawana.sqlite")
 
 def h2t(value):
