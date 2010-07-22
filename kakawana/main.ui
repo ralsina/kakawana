@@ -130,6 +130,8 @@
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="actionKeep_Google_Synced"/>
+    <addaction name="actionConfigure_Google_Account"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -271,6 +273,17 @@
    </property>
    <property name="text">
     <string>Export Feeds</string>
+   </property>
+  </action>
+  <action name="actionKeep_Google_Synced">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Keep Google Synced</string>
    </property>
   </action>
  </widget>

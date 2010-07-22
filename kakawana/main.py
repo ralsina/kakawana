@@ -709,6 +709,9 @@ class Main(QtGui.QMainWindow):
                     reader.unsubscribe_feed(fitem._id)
             self.loadFeeds()
 
+    def on_actionKeep_Google_Synced_toggled(self, b):
+        self.keepGoogleSynced = b
+
     def on_actionQuit_activated(self, b=None):
         if b is not None: return
         QtCore.QCoreApplication.instance().quit()
