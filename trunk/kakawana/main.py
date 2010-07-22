@@ -176,7 +176,7 @@ class Main(QtGui.QMainWindow):
         """Launches an update for the feed that needs it most"""
         feeds = backend.Feed.query.order_by("check_date").limit(1) 
         if feeds:
-            feed = [0]
+            feed = feeds[0]
             print feed.check_date
             # Only check if it has not been checked in at least 10 minutes
             if (datetime.datetime.now() - feed.check_date).seconds > 600:
