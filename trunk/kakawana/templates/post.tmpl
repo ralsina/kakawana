@@ -5,21 +5,28 @@
     <link rel="stylesheet" href="file://#{cssdir}/style.css" type="text/css" media="screen, projection">
 </head>
 <body>
-<a href="#{post.feed.url}">#{post.feed.name}</a>&nbsp;|&nbsp;
-<a href="cmd://mark-all-read">Mark all as read</a>&nbsp;|&nbsp;
-<a href="cmd://refresh">Refresh</a>&nbsp;|&nbsp;
-<a href="cmd://settings">Settings</a>
-<hr>
+<div id="feedbar">
+  <a href="#{post.feed.url}">#{post.feed.name}</a>&nbsp;
+  <div id="feedcmds">
+    |&nbsp;<a href="cmd://mark-all-read">Mark all as read</a>&nbsp;|&nbsp;
+    <a href="cmd://refresh">Refresh</a>&nbsp;|&nbsp;
+    <a href="cmd://settings">Settings</a>
+  </div>
+</div>
+<div id="postbar">
 <?py if post.title: ?>
   <h1><a href="#{post.url}">#{post.title}</a></h1>
 <?py else: ?>
   <h1><a href="#{post.url}"><h1>No Title</a></h1>
 <?py #end ?>
-Posted at #{utc2local(post.date)} | 
-<a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
-<a href="cmd://star">Star</a>&nbsp;|&nbsp;
-<a href="#{post.url}">Complete Story</a>
-<hr>
+Posted at #{utc2local(post.date)} 
+  <div id="postcmds">
+    |&nbsp;<a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
+    <a href="cmd://star">Star</a>
+  </div>
+</div>
+
+
 <div style='margin-top: 1em;'>
 #{content}
 <p>
@@ -37,9 +44,10 @@ Posted at #{utc2local(post.date)} |
   <?py #end ?>
   <a href="#{enclosure.href}">Download</a><br>
 <?py #end ?>
-<hr>
-<a href="cmd://keep-unread">Keep Unread</a>&nbsp;/&nbsp;
-<a href="cmd://star">Star</a>&nbsp;/&nbsp;
-<a href="#{post.url}">Complete Story</a>
+<div id="postbar2">
+    <a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
+    <a href="cmd://star">Star</a>&nbsp;|&nbsp;
+    <a href="#{post.url}">Complete Story</a>
+</div>
 </div>
 </body>
