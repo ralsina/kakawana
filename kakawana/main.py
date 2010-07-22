@@ -75,6 +75,7 @@ class Main(QtGui.QMainWindow):
         # Settings
         self.mode = 0
         self.showAllFeeds = False
+        self.showAllPosts = False
         self.keepGoogleSynced = True
         
         self.enclosures = []
@@ -190,6 +191,7 @@ class Main(QtGui.QMainWindow):
 
     def updateFeed(self, feed_id):
         # feed_id is a Feed.xmlurl, which is also item._id
+        # FIXME: hide read posts if needed
         for i in range(self.ui.feeds.topLevelItemCount()):
             fitem = self.ui.feeds.topLevelItem(i)
             if fitem._id == feed_id:
@@ -199,6 +201,7 @@ class Main(QtGui.QMainWindow):
                 existing = set()
                 for j in range (fitem.childCount()):
                     existing.add(fitem.child(j)._id)
+                    
                 posts = feed.posts[::-1]
                 for post in posts:
                     # If it's not there, add it
@@ -266,10 +269,12 @@ class Main(QtGui.QMainWindow):
                 fitem.setHidden(True)
 
             for post in feed.posts:
-                pitem=post.createItem(fitem)
-                if pitem._id == currentItemId:
-                    self.ui.feeds.setCurrentItem(pitem)
-                    scrollTo = pitem
+                if post.read == False or self.showAllPosts or \
+                        post._id == currentItemId:
+                    pitem=post.createItem(fitem)
+                    if pitem._id == currentItemId:
+                        self.ui.feeds.setCurrentItem(pitem)
+                        scrollTo = pitem
         if scrollTo:
             self.ui.feeds.scrollToItem(scrollTo)
 
@@ -583,6 +588,10 @@ class Main(QtGui.QMainWindow):
 
         # Check what feeds have been deleted here since last sync:
 
+    def on_actionShow_All_Posts_toggled(self, b=None):
+        print 'SAP:', b
+        self.showAllPosts = b
+        self.refreshFeeds()
 
     def on_actionShow_All_Feeds_toggled(self, b=None):
         print 'SAF:', b 
