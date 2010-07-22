@@ -182,7 +182,7 @@ class Main(QtGui.QMainWindow):
 
     def updateOneFeed(self):
         """Launches an update for the feed that needs it most"""
-        feeds = backend.Feed.query.order_by("check_date").limit(1) 
+        feeds = backend.Feed.query.order_by("check_date").limit(1).all()
         if feeds:
             feed = feeds[0]
             print feed.check_date
