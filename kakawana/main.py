@@ -487,13 +487,14 @@ class Main(QtGui.QMainWindow):
             feed = feeds[0]
         f = backend.Feed.createFromFPData(url, feed)
         
+        f.addPosts(feed=feed)
+        self.loadFeeds(f.xmlurl)
         if self.keepGoogleSynced:
             # Add this feed to google reader
             reader = self.getGoogleReader2()
             if reader:
                 reader.subscribe_feed(f.xmlurl, f.name)
-        f.addPosts(feed=feed)
-        self.loadFeeds(f.xmlurl)
+        
 
     def modeChange(self, mode=None):
         #if not isinstance(mode, int):
