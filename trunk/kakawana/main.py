@@ -117,7 +117,8 @@ class Main(QtGui.QMainWindow):
         self.modes=QtGui.QComboBox()
         self.modes.addItems(["Feed Decides", "Site", "Feed", "Fast Site", "Fast Feed"])
         self.modes.currentIndexChanged.connect(self.modeChange)
-        self.ui.toolBar.addWidget(self.modes)
+        self.ui.statusbar.addWidget(QtGui.QLabel('View mode:'))
+        self.ui.statusbar.addWidget(self.modes)
 
         self.fetcher = Process(target=fetcher)
         self.fetcher.daemon = True

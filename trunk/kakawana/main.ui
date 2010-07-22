@@ -94,40 +94,57 @@
      <height>24</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuActions">
+   <widget class="QMenu" name="menu_File">
     <property name="title">
-     <string>Actions</string>
+     <string>&amp;File</string>
     </property>
-    <addaction name="actionImport_Google_Reader"/>
+    <widget class="QMenu" name="menuImport_Feeds">
+     <property name="title">
+      <string>Import Feeds</string>
+     </property>
+     <addaction name="actionSync_Google_Feeds"/>
+    </widget>
+    <addaction name="menuImport_Feeds"/>
+    <addaction name="actionExport_Feeds"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
     <addaction name="actionShow_All_Feeds"/>
     <addaction name="actionShow_All_Posts"/>
-    <addaction name="actionUpdate_Feed"/>
-    <addaction name="actionMark_All_As_Read"/>
-    <addaction name="actionKeep_Unread"/>
-    <addaction name="separator"/>
    </widget>
-   <addaction name="menuActions"/>
+   <widget class="QMenu" name="menuFeed">
+    <property name="title">
+     <string>Feed</string>
+    </property>
+    <addaction name="actionMark_All_As_Read"/>
+    <addaction name="actionUpdate_Feed"/>
+    <addaction name="separator"/>
+    <addaction name="actionEdit_Feed"/>
+    <addaction name="actionDelete_Feed"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="actionAbout_Kakawana"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menuView"/>
+   <addaction name="menuFeed"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionNew_Feed"/>
-   <addaction name="actionDelete_Feed"/>
-   <addaction name="separator"/>
-   <addaction name="actionPrevious"/>
-   <addaction name="actionNext"/>
-   <addaction name="actionEdit_Feed"/>
-   <addaction name="actionSync_Google_Feeds"/>
-   <addaction name="actionConfigure_Google_Account"/>
-  </widget>
   <action name="actionNext">
    <property name="icon">
     <iconset resource="icons.qrc">
@@ -167,11 +184,6 @@
   <action name="actionUpdate_Feed">
    <property name="text">
     <string>Update Feed</string>
-   </property>
-  </action>
-  <action name="actionImport_Google_Reader">
-   <property name="text">
-    <string>Import Google Reader</string>
    </property>
   </action>
   <action name="actionShow_All_Feeds">
@@ -224,6 +236,41 @@
   <action name="actionConfigure_Google_Account">
    <property name="text">
     <string>Configure Google Account</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Help</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAbout_Kakawana">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>About Kakawana</string>
+   </property>
+  </action>
+  <action name="actionExport_Feeds">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Export Feeds</string>
    </property>
   </action>
  </widget>
