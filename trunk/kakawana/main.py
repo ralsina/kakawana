@@ -215,39 +215,43 @@ class Main(QtGui.QMainWindow):
             f.addPosts(feed_data)
             self.updateFeed(f.xmlurl)
 
-    def updateFeed(self, feed_id):
-        # feed_id is a Feed.xmlurl, which is also item._id
-        # FIXME: hide read posts if needed
-        seen = False
+    def findFeedItem(self, feed_id):
         for i in range(self.ui.feeds.topLevelItemCount()):
             fitem = self.ui.feeds.topLevelItem(i)
             if fitem._id == feed_id:
-                seen = True
-                # This is the one to update
-                feed = backend.Feed.get_by(xmlurl = feed_id)
-                # Get the ids of the existing items
-                existing = set()
-                for j in range (fitem.childCount()):
-                    existing.add(fitem.child(j)._id)
-                    
-                posts = feed.posts[::-1]
-                for post in posts:
-                    # If it's not there, add it
-                    if post._id not in existing and (
-                            post.read == False or self.showAllPosts):
-                        pitem=post.createItem(None)
-                        fitem.insertChild(0, pitem)
-                unread_count = len(filter(lambda p: not p.read, feed.posts))
-                fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
-                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
-                if self.ui.feeds.currentItem() == fitem or \
-                        self.showAllFeeds or \
-                        unread_count:
-                    fitem.setHidden(False)
-                else:
-                    fitem.setHidden(True)
+                return fitem
+        return None
 
-        if not seen:
+    def updateFeed(self, feed_id):
+        # feed_id is a Feed.xmlurl, which is also item._id
+        # FIXME: hide read posts if needed
+        fitem = self.findFeedItem(feed_id)
+        if fitem:
+            # This is the one to update
+            feed = backend.Feed.get_by(xmlurl = feed_id)
+            # Get the ids of the existing items
+            existing = set()
+            for j in range (fitem.childCount()):
+                existing.add(fitem.child(j)._id)
+
+            posts = feed.posts[::-1]
+            for post in posts:
+                # If it's not there, add it
+                if post._id not in existing and (
+                        post.read == False or self.showAllPosts):
+                    pitem=post.createItem(None)
+                    fitem.insertChild(0, pitem)
+            unread_count = len(filter(lambda p: not p.read, feed.posts))
+            fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
+            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+            if self.ui.feeds.currentItem() == fitem or \
+                    self.showAllFeeds or \
+                    unread_count:
+                fitem.setHidden(False)
+            else:
+                fitem.setHidden(True)
+
+        else:
             # This is actually a new feed, so reload
             # feed list
             self.refreshFeeds()
@@ -396,13 +400,11 @@ class Main(QtGui.QMainWindow):
             item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
 
             # Update unread count
-            if fitem._id == -1: # Recent
-                pass
-            elif fitem._id == -2: # Starred
-                pass
-            else: # Feed
-                unread_count = len(filter(lambda p: not p.read, p.feed.posts))
-                fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
+            if fitem._id in (-1, -2): # Not real feeds
+                # Find the real one
+                fitem = self.findFeedItem(p.feed.xmlurl)
+            unread_count = len(filter(lambda p: not p.read, p.feed.posts))
+            fitem.setText(0,'%s (%d)'%(p.feed.name,unread_count))
         else: # Feed
             self.updateCurrentFeed()
             if not item.isExpanded():
