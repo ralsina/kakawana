@@ -218,9 +218,11 @@ class Main(QtGui.QMainWindow):
     def updateFeed(self, feed_id):
         # feed_id is a Feed.xmlurl, which is also item._id
         # FIXME: hide read posts if needed
+        seen = False
         for i in range(self.ui.feeds.topLevelItemCount()):
             fitem = self.ui.feeds.topLevelItem(i)
             if fitem._id == feed_id:
+                seen = True
                 # This is the one to update
                 feed = backend.Feed.get_by(xmlurl = feed_id)
                 # Get the ids of the existing items
@@ -244,6 +246,11 @@ class Main(QtGui.QMainWindow):
                     fitem.setHidden(False)
                 else:
                     fitem.setHidden(True)
+
+        if not seen:
+            # This is actually a new feed, so reload
+            # feed list
+            self.refreshFeeds()
 
     def loadFeeds(self, expandedFeedId=None, currentItemId=None):
         '''Creates all items for feeds and posts.
