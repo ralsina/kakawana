@@ -5,6 +5,7 @@ VERSION="0.0.1"
 
 import os
 import re
+import time
 from elixir import *
 import feedparser
 import pickle, base64
@@ -56,6 +57,36 @@ class Feed(Entity):
     def __repr__(self):
         return "Feed: %s <%s>"%(self.name, self.url)
 
+    @classmethod
+    def createFromFPData(cls, url, feed):
+        '''
+        Create a feed in the DB from feedparser data.
+
+        feed is fedparser.parse(url)
+        '''
+        from pprint import pprint
+        
+        link = url
+        if 'link' in feed['feed']:
+            link = feed['feed']['link']
+        elif 'links' in feed['feed'] and feed['feed']['links']:
+            link = feed['feed']['links'][0].href
+
+        title = u'No Title'
+        if 'title' in feed['feed']:
+            title = feed['feed']['title']
+
+        # Add it to the DB
+        f = Feed.update_or_create(dict (
+            name = unicode(title),
+            url = unicode(link),
+            xmlurl = unicode(url),
+            data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))),
+            surrogate = False)
+        saveData()
+        return f
+
+
     def addPosts(self, feed=None):
         '''Takes an optional already parsed feed'''
         self.check_date = datetime.datetime.now()
@@ -78,22 +109,23 @@ class Feed(Entity):
                 self.url = feed['feed']['links'][0].href
         # Keep data fresh
         self.data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))
-        
-        if feed.status == 304: # No change
-            print "Got 304 on feed update"
-            saveData()
-            return
-        elif feed.status == 301: # Permanent redirect
-            print "Got 301 on feed update => %s"%feed.href
-            self.xmlUrl=feed.href
-        elif feed.status == 410: # Feed deleted. FIXME: tell the user and stop trying!
-            print "Got 410 on feed update"
-            saveData()
-            return
-        elif feed.status == 404: # Feed gone. FIXME: tell the user and stop trying!
-            print "Got 404 on feed update"
-            saveData()
-            return
+
+        if 'status' in feed:
+            if feed.status == 304: # No change
+                print "Got 304 on feed update"
+                saveData()
+                return
+            elif feed.status == 301: # Permanent redirect
+                print "Got 301 on feed update => %s"%feed.href
+                self.xmlUrl=feed.href
+            elif feed.status == 410: # Feed deleted. FIXME: tell the user and stop trying!
+                print "Got 410 on feed update"
+                saveData()
+                return
+            elif feed.status == 404: # Feed gone. FIXME: tell the user and stop trying!
+                print "Got 404 on feed update"
+                saveData()
+                return
         if 'etag' in feed:
             self.etag = feed['etag']
 
@@ -131,13 +163,21 @@ class Post(Entity):
             except AttributeError:
                 pass
 
+        data = base64.b64encode(pickle.dumps({}))
+        try:
+            data = base64.b64encode(pickle.dumps(post))
+        except:
+            print 'Error pickling post data'
+            from pprint import pprint
+            pprint(post)
+
         post_date = datetime.datetime(*post_date[:6])
         p=Post.update_or_create( dict(
             title = post.title,
             url = post.link,
             _id = post.id,
             date = post_date,
-            data = base64.b64encode(pickle.dumps(post))),
+            data = data),
             surrogate = False,
             )
         return p
