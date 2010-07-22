@@ -435,7 +435,9 @@ class Main(QtGui.QMainWindow):
             
             p.read=True
             backend.saveData()
-            if fitem._id != p.feed.xmlurl: # Marking as read not from the post's feed
+            
+            item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+            if fitem._id != p.feed.xmlurl: # Also mark as read in the post's feed
                 item = self.findPostItem(p)
             if item:
                 item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
@@ -706,7 +708,10 @@ class Main(QtGui.QMainWindow):
                 if reader:
                     reader.unsubscribe_feed(fitem._id)
             self.loadFeeds()
-        
+
+    def on_actionQuit_activated(self, b=None):
+        if b is not None: return
+        QtCore.QCoreApplication.instance().quit()
 
 def main():
     # Init the database before doing anything else
