@@ -199,10 +199,12 @@ class Main(QtGui.QMainWindow):
                 existing = set()
                 for j in range (fitem.childCount()):
                     existing.add(fitem.child(j)._id)
-                for post in feed.posts:
+                posts = feed.posts[::-1]
+                for post in posts:
                     # If it's not there, add it
                     if post._id not in existing:
-                        pitem=post.createItem(fitem)
+                        pitem=post.createItem(None)
+                        fitem.inserChild(0, pitem)
                 unread_count = len(filter(lambda p: not p.read, feed.posts))
                 fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
                 fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
@@ -332,16 +334,19 @@ class Main(QtGui.QMainWindow):
                 enclosure.deleteLater()
             self.enclosures=[]
             for e in data.enclosures:
+                # FIXME: add generic 'download' enclosure widget
+                cls = None
                 if hasattr(e,'type'):
                     if e.type.startswith('audio'):
                         cls = AudioPlayer
                     elif e.type.startswith('video'):
                         cls = VideoPlayer
-                    player = cls(e.href,
-                        self.enclosureContainer)
-                    player.show()
-                    self.enclosures.append(player)
-                    self.enclosureLayout.addWidget(player)
+                    if cls:
+                        player = cls(e.href,
+                            self.enclosureContainer)
+                        player.show()
+                        self.enclosures.append(player)
+                        self.enclosureLayout.addWidget(player)
             if self.enclosures:
                 self.enclosureContainer.show()
             else:
