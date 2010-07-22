@@ -467,6 +467,7 @@ class Main(QtGui.QMainWindow):
         url=unicode(url)
         feeds=[]
         feedurls=feedfinder.feeds(url)
+        from pudb import set_trace; set_trace()
         for furl in feedurls:
             f=feedparser.parse(furl)
             feeds.append(f)
@@ -484,9 +485,11 @@ class Main(QtGui.QMainWindow):
                 return
             # Finally, this is the feed URL
             feed = feeds[items.index(unicode(item))]
+            furl = feedurls[items.index(unicode(item))]
         else:
             feed = feeds[0]
-        f = backend.Feed.createFromFPData(url, feed)
+            furl = feedurls[0]
+        f = backend.Feed.createFromFPData(furl, feed)
         
         f.addPosts(feed=feed)
         self.loadFeeds(f.xmlurl)
@@ -707,6 +710,7 @@ class Main(QtGui.QMainWindow):
                 # Add this feed to google reader
                 reader = self.getGoogleReader2()
                 if reader:
+                    print 'Unsubscribing at google: ', fitem._id
                     reader.unsubscribe_feed(fitem._id)
             self.loadFeeds()
 
