@@ -701,6 +701,9 @@ class Main(QtGui.QMainWindow):
 
             # Got the current feed, now, must delete it
             feed.delete()
+            # Delete all feedless posts
+            for p in Post.query.filter_by(feed=None).all():
+                p.delete()
             backend.saveData()
 
             # May need to delete feed from google
