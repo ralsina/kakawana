@@ -3,11 +3,11 @@
 <title>#{feed.name}</title>
     <link rel="stylesheet" href="file://#{cssdir}/screen.css" type="text/css" media="screen, projection">
     <link rel="stylesheet" href="file://#{cssdir}/style.css" type="text/css" media="screen, projection">
-    <script src="http://static.simile.mit.edu/timeline/api-2.3.0/timeline-api.js?bundle=true" type="text/javascript"></script>
+<!--     <script src="http://static.simile.mit.edu/timeline/api-2.3.0/timeline-api.js?bundle=true" type="text/javascript"></script> -->
 
 
    <script>
-        var timeline_data = #{timelinedata};
+/*        var timeline_data = #{timelinedata};
         var tl;
         function onLoad() {
             var tl_el = document.getElementById("tl");
@@ -47,19 +47,36 @@
                     tl.layout();
                 }, 500);
             }
-        }
+        }*/
    </script>
 
 </head>
-<body onload="onLoad();" onresize="onResize();">
+<body>
+<!-- <body onload="onLoad();" onresize="onResize();"> -->
 <div id="feedbar">
-  <a href="#{feed.url}">#{feed.name}</a>&nbsp;
-  FIXME: this needs a lot of styling
+  <h1><a href="#{feed.url}">#{feed.name}</a></h1>
 </div>
 <div>
-  <span><a href="cmd://mark-as-read">Mark All as Read</a></span>
-  <span><a href="cmd://settings">Settings</a></span>
-  <span><a href="cmd://unsubscribe">Unsubscribe</a></span>
+  <table width="100%" border="0" colwidths="33%,33%,33%">
+  <td>
+  <div style="width: 100%; padding: 5px; text-align: center;">
+    <a href="cmd://unsubscribe">
+    <img width="128px" src="file://#{cssdir}/close.svg"><br>
+    Unsubscribe</a>
+  </div>
+  <td>
+  <div style="width: 100%; padding: 5px; text-align: center;">
+    <a href="cmd://mark-as-read">
+    <img width="128px" src="file://#{cssdir}/player_fwd.svg"><br>
+    Mark All as Read</a>
+  </div>
+  <td>
+  <div style="width: 100%; padding: 5px; text-align: center;">
+    <a href="cmd://settings">
+    <img width="128px" src="file://#{cssdir}/configure.svg"><br>
+    Settings</a>
+  </div>
+  </table>
 </div>
   
 <div>
