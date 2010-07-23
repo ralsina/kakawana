@@ -22,10 +22,11 @@
 Posted at #{utc2local(post.date)} 
   <div id="postcmds">
     |&nbsp;<a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
-    <a href="cmd://star">Star</a>
+    <a href="cmd://star">Star</a>&nbsp;|&nbsp;
+    <!-- AddToAny BEGIN -->
+    <a href="http://www.addtoany.com/share_save?linkurl=#{escapedposturl}&amp;linkname=#{escapedposttitle}"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" width="171" height="16" border="0" alt="Share/Bookmark"/></a>
   </div>
 </div>
-
 
 <div style='margin-top: 1em;'>
 #{content}

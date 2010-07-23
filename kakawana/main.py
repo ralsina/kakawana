@@ -2,7 +2,7 @@
 
 """The user interface for our app"""
 
-import os, sys, hashlib, re
+import os, sys, hashlib, re, cgi
 from pprint import pprint
 
 # Import Qt modules
@@ -398,7 +398,10 @@ class Main(QtGui.QMainWindow):
                     post = p,
                     data = data,
                     content = content,
-                    cssdir = tmplDir))
+                    cssdir = tmplDir,
+                    escapedposturl=cgi.escape(p.url),
+                    escapedposttitle=cgi.escape(p.title),
+                    ))
             elif self.mode == 3:
                 # Fast site mode
                 fname = os.path.join(backend.dbdir, 'cache',

@@ -2,23 +2,28 @@
     border: 1px solid #ccf;
     padding: 4px;
     margin-bottom: 8px;
+    vertical-align: middle;
 }
 
 #feedcmds {
     float: right;
+    vertical-align: middle;
 }
 
 #postbar {
     border: 1px solid #ccf;
     padding: 4px;
+    vertical-align: middle;
 }
 
 #postcmds {
     float: right;
+    vertical-align: middle;
 }
 
 #postbar2 {
     border: 1px solid #ccf;
     padding: 4px;
     text-align: center;
+    vertical-align: middle;
 }
