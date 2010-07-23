@@ -467,7 +467,6 @@ class Main(QtGui.QMainWindow):
         url=unicode(url)
         feeds=[]
         feedurls=feedfinder.feeds(url)
-        from pudb import set_trace; set_trace()
         for furl in feedurls:
             f=feedparser.parse(furl)
             feeds.append(f)
