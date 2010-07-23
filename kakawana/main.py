@@ -24,6 +24,7 @@ from audioplayer import AudioPlayer
 from videoplayer import VideoPlayer
 import libgreader as gr
 from reader_client import GoogleReaderClient
+import json
 
 def h2t(value):
     "Return the given HTML with all tags stripped."
@@ -454,7 +455,16 @@ class Main(QtGui.QMainWindow):
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
             feed=backend.Feed.get_by(xmlurl=item._id)
+
+            # Timeline data structure
+            tdata={}
+            tdata['events']=[{
+                'start': p.date.strftime(r"%b %d %Y %H:%M:00 GMT"),
+                'title': p.title,
+                'link': p.url,
+                } for p in feed.posts]
             self.ui.html.setHtml(renderTemplate('feed.tmpl',
+                timelinedata = json.dumps(tdata),
                 feed = feed,
                 cssdir = tmplDir,
                 ))
