@@ -458,11 +458,11 @@ class Main(QtGui.QMainWindow):
 
             # Timeline data structure
             tdata={}
-            tdata['events']=[{
-                'start': p.date.strftime(r"%b %d %Y %H:%M:00 GMT"),
-                'title': p.title,
-                'link': p.url,
-                } for p in feed.posts]
+            #tdata['events']=[{
+            #    'start': p.date.strftime(r"%b %d %Y %H:%M:00 GMT"),
+            #    'title': p.title,
+            #    'link': p.url,
+            #    } for p in feed.posts]
             self.ui.html.setHtml(renderTemplate('feed.tmpl',
                 timelinedata = json.dumps(tdata),
                 feed = feed,
