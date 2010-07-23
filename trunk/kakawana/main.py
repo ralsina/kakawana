@@ -454,20 +454,23 @@ class Main(QtGui.QMainWindow):
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
+                
             feed=backend.Feed.get_by(xmlurl=item._id)
-
-            # Timeline data structure
-            tdata={}
-            #tdata['events']=[{
-            #    'start': p.date.strftime(r"%b %d %Y %H:%M:00 GMT"),
-            #    'title': p.title,
-            #    'link': p.url,
-            #    } for p in feed.posts]
-            self.ui.html.setHtml(renderTemplate('feed.tmpl',
-                timelinedata = json.dumps(tdata),
-                feed = feed,
-                cssdir = tmplDir,
-                ))
+            if feed:
+                # Timeline data structure
+                tdata={}
+                #tdata['events']=[{
+                #    'start': p.date.strftime(r"%b %d %Y %H:%M:00 GMT"),
+                #    'title': p.title,
+                #    'link': p.url,
+                #    } for p in feed.posts]
+                self.ui.html.setHtml(renderTemplate('feed.tmpl',
+                    timelinedata = json.dumps(tdata),
+                    feed = feed,
+                    cssdir = tmplDir,
+                    ))
+            else:
+                self.ui.html.setHtml("")
             
         # FIXME: should hide read items if they shouldn't be displayed
 
