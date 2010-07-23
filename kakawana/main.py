@@ -453,6 +453,12 @@ class Main(QtGui.QMainWindow):
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
+            feed=backend.Feed.get_by(xmlurl=item._id)
+            self.ui.html.setHtml(renderTemplate('feed.tmpl',
+                feed = feed,
+                cssdir = tmplDir,
+                ))
+            
         # FIXME: should hide read items if they shouldn't be displayed
 
     def on_actionNew_Feed_triggered(self, b=None):
