@@ -284,10 +284,9 @@ class Main(QtGui.QMainWindow):
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
             fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
-            if self.ui.feeds.currentItem() == fitem or \
+            if (self.ui.feeds.currentItem() and (fitem in [self.ui.feeds.currentItem(),self.ui.feeds.currentItem().parent()]))  or \
                     self.showAllFeeds or \
-                    unread_count or\
-                    self.ui.feeds.currentItem().parent() == fitem:
+                    unread_count:
                 fitem.setHidden(False)
             else:
                 fitem.setHidden(True)
