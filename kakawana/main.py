@@ -165,6 +165,9 @@ class Main(QtGui.QMainWindow):
             elif cmd == 'refresh':
                 self.updateCurrentFeed()
 
+            elif cmd == 'unsubscribe':
+                self.on_actionDelete_Feed_activated()
+                
             # Post commands
             elif cmd == 'keep-unread':
                 self.actionKeep_Unread.trigger()
@@ -724,7 +727,7 @@ class Main(QtGui.QMainWindow):
             # Got the current feed, now, must delete it
             feed.delete()
             # Delete all feedless posts
-            for p in Post.query.filter_by(feed=None).all():
+            for p in backend.Post.query.filter_by(feed=None).all():
                 p.delete()
             backend.saveData()
 
