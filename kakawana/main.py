@@ -101,7 +101,6 @@ class Main(QtGui.QMainWindow):
         self.ui = self
         #QtWebKit.QWebSettings.globalSettings().\
             #setAttribute(QtWebKit.QWebSettings.PluginsEnabled, True)
-        #self.ui.setupUi(self)
 
         self.enclosureLayout = QtGui.QVBoxLayout(self.enclosureContainer)
         self.enclosureContainer.setLayout(self.enclosureLayout)
@@ -109,6 +108,8 @@ class Main(QtGui.QMainWindow):
 
         # Smart 'Space' that jumps to next post if needed
         self.addAction(self.ui.actionSpace)
+        self.addAction(self.ui.actionNext)
+        self.addAction(self.ui.actionPrevious)
 
         self.ui.html.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateExternalLinks)
         self.ui.html.page().linkClicked.connect(self.linkClicked)
@@ -697,11 +698,11 @@ class Main(QtGui.QMainWindow):
         frame = self.html.page().mainFrame()
         if frame.scrollBarMaximum(QtCore.Qt.Vertical) == \
             frame.scrollPosition().y():
-                self.on_actionNext_Post_activated()
+                self.on_actionNext_activated()
         else:
             frame.scroll(0,self.html.height())
             
-    def on_actionNext_Post_activated(self, b=None):
+    def on_actionNext_activated(self, b=None):
         '''Jump to the beginning of the next post'''
         if b is not None: return
         item = self.ui.feeds.currentItem()
@@ -709,6 +710,17 @@ class Main(QtGui.QMainWindow):
             item = self.ui.feeds.topLevelItem(0)
         if item:
             item = self.ui.feeds.itemBelow(item)
+            self.ui.feeds.setCurrentItem(item)
+            self.on_feeds_itemClicked(item)
+            
+    def on_actionPrevious_activated(self, b=None):
+        '''Jump to the beginning of the previous post'''
+        if b is not None: return
+        item = self.ui.feeds.currentItem()
+        if not item:
+            item = self.ui.feeds.topLevelItem(0)
+        if item:
+            item = self.ui.feeds.itemAbove(item)
             self.ui.feeds.setCurrentItem(item)
             self.on_feeds_itemClicked(item)
             

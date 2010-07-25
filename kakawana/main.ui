@@ -156,6 +156,9 @@
    <property name="text">
     <string>Next</string>
    </property>
+   <property name="shortcut">
+    <string>J</string>
+   </property>
   </action>
   <action name="actionPrevious">
    <property name="icon">
@@ -164,6 +167,9 @@
    </property>
    <property name="text">
     <string>Previous</string>
+   </property>
+   <property name="shortcut">
+    <string>K</string>
    </property>
   </action>
   <action name="actionNew_Feed">
