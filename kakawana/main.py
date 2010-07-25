@@ -462,13 +462,14 @@ class Main(QtGui.QMainWindow):
                 
                 # Opening closed feed, so clean up first, then
                 # refill
-                for i in range(item.childCount()):
-                    item.removeChild(item.child(0))
-                for i,post in enumerate(feed.posts):
-                    if post.read == False or self.showAllPosts:
-                        pitem=post.createItem(item)
-                        if i%10==0:
-                            QtCore.QCoreApplication.instance().processEvents()
+                if feed:
+                    for i in range(item.childCount()):
+                        item.removeChild(item.child(0))
+                    for i,post in enumerate(feed.posts):
+                        if post.read == False or self.showAllPosts:
+                            pitem=post.createItem(item)
+                            if i%10==0:
+                                QtCore.QCoreApplication.instance().processEvents()
                 
             if feed:
                 # Timeline data structure
