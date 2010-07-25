@@ -482,11 +482,15 @@ class Main(QtGui.QMainWindow):
                 if feed:
                     for i in range(item.childCount()):
                         item.removeChild(item.child(0))
+                    c = 0
                     for i,post in enumerate(feed.posts):
                         if post.read == False or self.showAllPosts:
                             pitem=post.createItem(item)
+                            c+=1
                             if i%10==0:
                                 QtCore.QCoreApplication.instance().processEvents()
+                        if c > 100:
+                            break
                 
             if feed:
                 # Timeline data structure
