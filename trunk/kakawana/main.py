@@ -350,13 +350,13 @@ class Main(QtGui.QMainWindow):
             else:
                 fitem.setHidden(True)
 
-            for post in feed.posts:
-                if post.read == False or self.showAllPosts or \
-                        post._id == currentItemId:
-                    pitem=post.createItem(fitem)
-                    if pitem._id == currentItemId:
-                        self.ui.feeds.setCurrentItem(pitem)
-                        scrollTo = pitem
+            #for post in feed.posts:
+                #if post.read == False or self.showAllPosts or \
+                        #post._id == currentItemId:
+                    #pitem=post.createItem(fitem)
+                    #if pitem._id == currentItemId:
+                        #self.ui.feeds.setCurrentItem(pitem)
+                        #scrollTo = pitem
         if scrollTo:
             self.ui.feeds.scrollToItem(scrollTo)
 
@@ -454,11 +454,21 @@ class Main(QtGui.QMainWindow):
             self.updateFeed(p.feed.xmlurl)
         else: # Feed
             self.updateCurrentFeed()
+            feed=backend.Feed.get_by(xmlurl=item._id)
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
                 
-            feed=backend.Feed.get_by(xmlurl=item._id)
+                # Opening closed feed, so clean up first, then
+                # refill
+                for i in range(item.childCount()):
+                    item.removeChild(item.child(0))
+                for i,post in enumerate(feed.posts):
+                    if post.read == False or self.showAllPosts:
+                        pitem=post.createItem(item)
+                        if i%10==0:
+                            QtCore.QCoreApplication.instance().processEvents()
+                
             if feed:
                 # Timeline data structure
                 tdata={}
@@ -704,6 +714,9 @@ class Main(QtGui.QMainWindow):
             
     def on_actionKeep_Unread_activated(self, b=None):
         '''Mark the current post as unread'''
+        # FIXME this **can** be called without the item being current
+        # if the user calls it from the page link, so it should take an ID
+        # as optional argument
         if b is not None: return
         item = self.ui.feeds.currentItem()
         if not item.parent(): return # Not a post
