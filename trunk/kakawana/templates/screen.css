@@ -88,7 +88,7 @@ a { position: relative; padding: 0.3em 0 .1em 0; } /*** for larger click-area **
 /*** COLORS ***/
 a:link { text-decoration: none; color: #36c; }
 a:visited { text-decoration: none; color: #99c; }
-a:hover { text-decoration: underline; color: #c33; }
+/* a:hover { text-decoration: underline; color: #c33; } */
 a:active, a:focus { text-decoration: underline; color: #000; }
 code, pre { color: #333; } /*** very optional, but still useful. W3C uses about the same colors for codes ***/
 
