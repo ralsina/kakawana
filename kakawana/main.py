@@ -790,6 +790,14 @@ class Main(QtGui.QMainWindow):
         if b is not None: return
         QtCore.QCoreApplication.instance().quit()
 
+    def on_actionAbout_Kakawana_activated(self, b=None):
+        if b is not None: return
+        QtGui.QMessageBox.about(self, "About Kakawana", """
+        Kakawana is a simple newsreader, with Google Reader syncing.
+        Author: Roberto Alsina <ralsina@netmanagers.com.ar>
+        Site: http://kakawana.googlecode.com
+        """)
+
 def main():
     # Init the database before doing anything else
     backend.initDB()
