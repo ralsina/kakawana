@@ -165,7 +165,8 @@ class Post(Entity):
                 post_date = post.updated_parsed
             except AttributeError:
                 pass
-
+        if not post_date: # Sometimes it comes back None
+            post_date = time.localtime()
         data = base64.b64encode(pickle.dumps({}))
         try:
             data = base64.b64encode(pickle.dumps(post))
