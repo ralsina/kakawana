@@ -80,15 +80,17 @@
 </div>
   
 <div>
-  Feed Info goes here
+<ul>
+<li>Feed URL: <a href="#{feed.url}">#{feed.url}</a></br>
+<li>Last Update: #{feed.posts[0].date}
+</ul>
+<h3>Recent posts</h3>
+<ul>
+<?py for post in feed.posts[:10]:?>
+    <li><a href=#{post.url}>#{post.title}</a>
+<?py #end ?>
+</ul>
+
 </div>
   
-<div id='tl'></div>
-<p>To move the Timeline: use the mouse scroll wheel, the arrow keys or grab and drag the Timeline.</p>
-
-<div id="ft" role="contentinfo">
-  <p>Thanks to the <a href=''>Simile Timeline project</a> Timeline version <span id='tl_ver'></span></p>
-  <script>Timeline.writeVersion('tl_ver')</script>
-</div>
-
 </body>
