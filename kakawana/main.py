@@ -75,23 +75,31 @@ def fetcher():
     while True:
         print 'Fetching'
         try:
-            cmd = fetcher_in.get(5)
-            if cmd[0] == 'update':
-                print 'Updating:', cmd[1],'...',
-                f=feedparser.parse(cmd[1],
-                    etag = cmd[2],
-                    modified = cmd[3].timetuple())
-                if 'bozo_exception' in f:
-                    f['bozo_exception'] = None
-                fetcher_out.put(['updated',cmd[1],f])
-                print 'Done'
-            elif cmd[0] == 'add':
-                print 'Adding:', cmd[1],'...'
-                f=feedparser.parse(cmd[1])
-                if 'bozo_exception' in f:
-                    f['bozo_exception'] = None
-                fetcher_out.put(['added',cmd[1],f])
-                print 'Done'
+            commands = []
+            while True:
+                cmd = fetcher_in.get(5)
+                if cmd not in commands:
+                    commands.insert(0,cmd)
+                if fetcher_in.empty():
+                   break
+            while len(commands):
+                cmd = commands.pop()
+                if cmd[0] == 'update':
+                    print 'Updating:', cmd[1],'...',
+                    f=feedparser.parse(cmd[1],
+                        etag = cmd[2],
+                        modified = cmd[3].timetuple())
+                    if 'bozo_exception' in f:
+                        f['bozo_exception'] = None
+                    fetcher_out.put(['updated',cmd[1],f])
+                    print 'Done'
+                elif cmd[0] == 'add':
+                    print 'Adding:', cmd[1],'...'
+                    f=feedparser.parse(cmd[1])
+                    if 'bozo_exception' in f:
+                        f['bozo_exception'] = None
+                    fetcher_out.put(['added',cmd[1],f])
+                    print 'Done'
                 
         except Exception as e:
             print 'exception in fetcher:', e
@@ -500,10 +508,16 @@ class Main(QtGui.QMainWindow):
                 #    'title': p.title,
                 #    'link': p.url,
                 #    } for p in feed.posts]
+                data = pickle.loads(base64.b64decode(feed.data))
+                if 'status' in data:
+                    status = data['status']
+                else:
+                    status = 'Unknown'
                 self.ui.html.setHtml(renderTemplate('feed.tmpl',
                     timelinedata = json.dumps(tdata),
                     feed = feed,
                     cssdir = tmplDir,
+                    status = status,
                     ))
             else:
                 self.ui.html.setHtml("")
