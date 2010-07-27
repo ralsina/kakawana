@@ -56,6 +56,7 @@ class Feed(Entity):
     '''etag of last check'''
     check_date=Field(DateTime, required=False, default=datetime.datetime(1970,1,1))
     '''timestamp of last check'''
+    last_status=Field(Integer, required=False, default=0)
     
     def __repr__(self):
         return "Feed: %s <%s>"%(self.name, self.url)
@@ -93,6 +94,7 @@ class Feed(Entity):
     def addPosts(self, feed=None):
         '''Takes an optional already parsed feed'''
         self.check_date = datetime.datetime.now()
+        saveData()
         if feed == None:
             feed=feedparser.parse(self.xmlurl,
                 etag = self.etag,
@@ -171,9 +173,7 @@ class Post(Entity):
         try:
             data = base64.b64encode(pickle.dumps(post))
         except:
-            print 'Error pickling post data'
-            from pprint import pprint
-            pprint(post)
+            print 'Error pickling post data', post.id
 
         post_date = datetime.datetime(*post_date[:6])
         p=Post.update_or_create( dict(
