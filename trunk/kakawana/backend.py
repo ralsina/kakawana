@@ -204,16 +204,15 @@ class Post(Entity):
         return p
 
     def createItem(self, fitem):
-        pitem=QtGui.QTreeWidgetItem(fitem,[h2t(self.title) or unicode(self.date)])
+        pitem=QtGui.QTreeWidgetItem(fitem,['',h2t(self.title) or unicode(self.date)])
         if self.read:
-            pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+            pitem.setForeground(1, QtGui.QBrush(QtGui.QColor("lightgray")))
         else:
-            pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
+            pitem.setForeground(1, QtGui.QBrush(QtGui.QColor("black")))
         if self.star:
             pitem.setIcon(0,QtGui.QIcon(':/icons/star.svg'))
         else:
             pitem.setIcon(0,QtGui.QIcon(':/icons/star2.svg'))
-        #pitem.setIconSize(QtCore.QSize(12,12))
         pitem._id=self._id
         return pitem
         
