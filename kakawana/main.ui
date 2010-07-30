@@ -49,6 +49,17 @@
         <property name="text">
          <string notr="true">1</string>
         </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/star2.svg</normaloff>
+          <normalon>:/icons/star.svg</normalon>
+          <disabledoff>:/icons/star2.svg</disabledoff>
+          <disabledon>:/icons/star.svg</disabledon>
+          <activeoff>:/icons/star2.svg</activeoff>
+          <activeon>:/icons/star.svg</activeon>
+          <selectedoff>:/icons/star2.svg</selectedoff>
+          <selectedon>:/icons/star.svg</selectedon>:/icons/star2.svg</iconset>
+        </property>
        </column>
       </widget>
       <widget class="QSplitter" name="vsplitter">

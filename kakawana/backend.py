@@ -12,6 +12,7 @@ import pickle, base64
 import datetime, time
 # Import Qt modules
 from PyQt4 import QtCore, QtGui, QtWebKit
+import icons_rc
 
 feedparser.USER_AGENT = 'Kakawana/%s +http://kakawana.googlecode.com/'%VERSION
 
@@ -208,6 +209,11 @@ class Post(Entity):
             pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
         else:
             pitem.setForeground(0, QtGui.QBrush(QtGui.QColor("black")))
+        if self.star:
+            pitem.setIcon(0,QtGui.QIcon(':/icons/star.svg'))
+        else:
+            pitem.setIcon(0,QtGui.QIcon(':/icons/star2.svg'))
+        #pitem.setIconSize(QtCore.QSize(12,12))
         pitem._id=self._id
         return pitem
         
