@@ -292,7 +292,7 @@ class Main(QtGui.QMainWindow):
                     pitem=post.createItem(None)
                     fitem.insertChild(0, pitem)
             unread_count = len(filter(lambda p: not p.read, feed.posts))
-            fitem.setText(0,'%s (%d)'%(feed.name,unread_count))
+            fitem.setText(0,backend.h2t('%s (%d)'%(feed.name,unread_count)))
             fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
             if (self.ui.feeds.currentItem() and (fitem in [self.ui.feeds.currentItem(),self.ui.feeds.currentItem().parent()]))  or \
                     self.showAllFeeds or \
@@ -595,7 +595,7 @@ class Main(QtGui.QMainWindow):
         self.ui.vsplitter.addWidget(self.feed_properties)
 
         # get feed and load data into the widget
-        self.feed_properties.name.setText(feed.name)
+        self.feed_properties.name.setText(backend.h2t(feed.name))
         self.feed_properties.url.setText(feed.url or '')
         self.feed_properties.xmlurl.setText(feed.xmlurl)
         
