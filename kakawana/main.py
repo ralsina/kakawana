@@ -107,6 +107,12 @@ class Main(QtGui.QMainWindow):
         #QtWebKit.QWebSettings.globalSettings().\
             #setAttribute(QtWebKit.QWebSettings.PluginsEnabled, True)
 
+
+        # Fix column widths in feed list
+        header=self.ui.feeds.header()
+        header.setResizeMode(0, QtGui.QHeaderView.Fixed)
+        header.resizeSection(0, 24)
+
         self.enclosureLayout = QtGui.QVBoxLayout(self.enclosureContainer)
         self.enclosureContainer.setLayout(self.enclosureLayout)
         self.enclosureContainer.hide()
@@ -292,8 +298,8 @@ class Main(QtGui.QMainWindow):
                     pitem=post.createItem(None)
                     fitem.insertChild(0, pitem)
             unread_count = len(filter(lambda p: not p.read, feed.posts))
-            fitem.setText(0,backend.h2t('%s (%d)'%(feed.name,unread_count)))
-            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+            fitem.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
+            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor(20,20,20)))
             if (self.ui.feeds.currentItem() and (fitem in [self.ui.feeds.currentItem(),self.ui.feeds.currentItem().parent()]))  or \
                     self.showAllFeeds or \
                     unread_count:
@@ -319,7 +325,7 @@ class Main(QtGui.QMainWindow):
         # Add "some recent"
         #posts =  backend.Post.query.filter(backend.Post.read==False).\
             #order_by("date desc").limit(50)
-        fitem = QtGui.QTreeWidgetItem(["Recent"])
+        fitem = QtGui.QTreeWidgetItem(['',"Recent"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -1
         self.ui.feeds.addTopLevelItem(fitem)
@@ -331,7 +337,7 @@ class Main(QtGui.QMainWindow):
             #pitem = post.createItem(fitem)
 
         #posts = backend.Post.query.filter(backend.Post.star==True)
-        fitem = QtGui.QTreeWidgetItem(["Starred"])
+        fitem = QtGui.QTreeWidgetItem(['',"Starred"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -2
         self.ui.feeds.addTopLevelItem(fitem)
@@ -343,7 +349,7 @@ class Main(QtGui.QMainWindow):
         
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
-            fitem=QtGui.QTreeWidgetItem([backend.h2t('%s (%d)'%(feed.name,unread_count))])
+            fitem=QtGui.QTreeWidgetItem(['',backend.h2t('%s (%d)'%(feed.name,unread_count))])
             fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
             fitem._id = feed.xmlurl
             self.ui.feeds.addTopLevelItem(fitem)
@@ -451,11 +457,11 @@ class Main(QtGui.QMainWindow):
             p.read=True
             backend.saveData()
             
-            item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+            item.setForeground(1, QtGui.QBrush(QtGui.QColor("lightgray")))
             if fitem._id != p.feed.xmlurl: # Also mark as read in the post's feed
                 item = self.findPostItem(p)
             if item:
-                item.setForeground(0, QtGui.QBrush(QtGui.QColor("lightgray")))
+                item.setForeground(1, QtGui.QBrush(QtGui.QColor("lightgray")))
             # Update unread count
             self.updateFeed(p.feed.xmlurl)
         else: # Feed
