@@ -60,7 +60,7 @@ class Feed(Entity):
     # This specifies the table name we will use in the database, 
     # I think it's nicer than the automatic names Elixir uses.
     name = Field(Unicode,required=True)
-    '''The name of the comic'''
+    '''The name of the feed'''
     url = Field(Unicode,required=False)
     '''The URL of the comic's website'''
     xmlurl = Field(Unicode,required=True, primary_key=True)
@@ -71,9 +71,16 @@ class Feed(Entity):
     '''Posts in the feed'''
     etag = Field(Text, default='')
     '''etag of last check'''
-    check_date=Field(DateTime, required=False, default=datetime.datetime(1970,1,1))
+    check_date = Field(DateTime, required=False, default=datetime.datetime(1970,1,1))
     '''timestamp of last check'''
-    last_status=Field(Integer, required=False, default=0)
+    last_status = Field(Integer, required=False, default=0)
+    '''last status of the feed'''
+    last_good_check = Field(DateTime, required=False, default=datetime.datetime(1970,1,1))
+    '''last good check (status 2xx or 3xx)'''
+    bad_check_count = Field(Integer, default=0)
+    '''How many bad checks in a row'''
+    mode = Field(Integer, default=1)
+    '''Mode to use to display the feed'''
     
     def __repr__(self):
         return "Feed: %s <%s>"%(self.name, self.url)
