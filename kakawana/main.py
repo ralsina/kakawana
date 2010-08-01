@@ -310,8 +310,12 @@ class Main(QtGui.QMainWindow):
                     fitem.insertChild(0, pitem)
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             fitem.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
-            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor(200,200,200)))
-            fitem.setBackground(1, QtGui.QBrush(QtGui.QColor(200,200,200)))
+            if unread_count:
+                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+                fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
+            else:
+                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor(200,200,200)))
+                fitem.setBackground(1, QtGui.QBrush(QtGui.QColor(200,200,200)))
             if (self.ui.feeds.currentItem() and (fitem in [self.ui.feeds.currentItem(),self.ui.feeds.currentItem().parent()]))  or \
                     self.showAllFeeds or \
                     unread_count:
