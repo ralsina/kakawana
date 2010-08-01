@@ -46,6 +46,23 @@ def decode_htmlentities(string):
 # the user's home to store its files. That way, you can 
 # always find them, and the user knows where everything is.
 
+
+# Sanitize parsed feeds so they can be pickled, see
+# http://bugs.python.org/issue1757062
+
+import BeautifulSoup
+
+def sanitize(d):
+    if isinstance(d, BeautifulSoup.NavigableString):
+        return unicode(d)
+    elif isinstance (d, list):
+        return [sanitize(i) for i in d]
+    elif hasattr(d,'keys'):
+        for k in d.keys():
+            d[k]=sanitize(d[k])
+    return d
+            
+
 class Feed(Entity):
     """
     A comic book feed
@@ -109,7 +126,7 @@ class Feed(Entity):
             name = unicode(title),
             url = unicode(link),
             xmlurl = unicode(url),
-            data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))),
+            data = unicode(base64.b64encode(pickle.dumps(sanitize(feed['feed']))))),
             surrogate = False)
         saveData()
         return f
@@ -137,7 +154,7 @@ class Feed(Entity):
             elif 'links' in feed['feed'] and feed['feed']['links']:
                 self.url = feed['feed']['links'][0].href
         # Keep data fresh
-        self.data = unicode(base64.b64encode(pickle.dumps(feed['feed'])))
+        self.data = unicode(base64.b64encode(pickle.dumps(sanitize(feed['feed']))))
 
         if 'status' in feed:
             if feed.status == 304: # No change
@@ -195,7 +212,7 @@ class Post(Entity):
             post_date = time.localtime()
         data = base64.b64encode(pickle.dumps({}))
         try:
-            data = base64.b64encode(pickle.dumps(post))
+            data = base64.b64encode(pickle.dumps(sanitize(post)))
         except:
             print 'Error pickling post data', post.id
 

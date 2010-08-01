@@ -35,19 +35,21 @@ Posted at #{utc2local(post.date)}
 <div style='margin-top: 1em;'>
 #{content}
 <p>
-<?py for enclosure in  data.enclosures: ?>
-  <?py if hasattr(enclosure, 'type'): ?>
-    <?py if enclosure.type.startswith('audio'): ?>
-        <audio autobuffer="Yes" controls="controls" src="#{enclosure.href}"></audio><br>
+<?py if data: ?>
+  <?py for enclosure in  data.enclosures: ?>
+    <?py if hasattr(enclosure, 'type'): ?>
+        <?py if enclosure.type.startswith('audio'): ?>
+            <audio autobuffer="Yes" controls="controls" src="#{enclosure.href}"></audio><br>
+        <?py #end ?>
+        <?py if enclosure.type.startswith('image'): ?>
+            <img src="#{enclosure.href}"></img><br>
+        <?py #end ?>
+        <?py if enclosure.type.startswith('video'): ?>
+            <video autobuffer="Yes" controls="controls" src="#{enclosure.href}"></video><br>
+        <?py #end ?>
     <?py #end ?>
-    <?py if enclosure.type.startswith('image'): ?>
-        <img src="#{enclosure.href}"></img><br>
-    <?py #end ?>
-    <?py if enclosure.type.startswith('video'): ?>
-        <video autobuffer="Yes" controls="controls" src="#{enclosure.href}"></video><br>
-    <?py #end ?>
+    <a href="#{enclosure.href}">Download</a><br>
   <?py #end ?>
-  <a href="#{enclosure.href}">Download</a><br>
 <?py #end ?>
 <div id="postbar2">
     <a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
