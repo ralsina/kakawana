@@ -196,14 +196,11 @@ class Main(QtGui.QMainWindow):
     def updateStarredFeed(self):
         '''Updates the 'starred posts' feed'''
         fitem = self.findFeedItem(-2)
-        existing = set()
         for j in range (fitem.childCount()):
-            existing.add(fitem.child(j)._id)
+            fitem.takeChildren()
         posts =  backend.Post.query.filter(backend.Post.star==True)
-        for post in posts[::-1]:
-            if post._id not in existing:
-                pitem = post.createItem(None)
-                fitem.insertChild(0,pitem)
+        for post in posts:
+            pitem = post.createItem(fitem)
 
     def updateRecentFeed(self):
         '''Updates the 'recent posts' feed'''
