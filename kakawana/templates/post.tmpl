@@ -23,9 +23,9 @@ Posted at #{utc2local(post.date)}
   <div id="postcmds">
     |&nbsp;<a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
 <?py if post.star: ?>
-    <a href="cmd://unstar">Remove Star</a>&nbsp;|&nbsp;
+    <a href="cmd://unstar"><img src="file://#{cssdir}/star2.svg" width="14px"></a>&nbsp;|&nbsp;
 <?py else: ?>
-    <a href="cmd://star">Star</a>&nbsp;|&nbsp;
+    <a href="cmd://star"><img src="file://#{cssdir}/star.svg" width="14px"></a>&nbsp;|&nbsp;
 <?py #end ?>
     <!-- AddToAny BEGIN -->
     <a href="http://www.addtoany.com/share_save?linkurl=#{escapedposturl}&amp;linkname=#{escapedposttitle}"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" width="171" height="16" border="0" alt="Share/Bookmark"/></a>
@@ -52,9 +52,9 @@ Posted at #{utc2local(post.date)}
 <div id="postbar2">
     <a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
 <?py if post.star: ?>
-    <a href="cmd://unstar">Remove Star</a>&nbsp;|&nbsp;
+    <a href="cmd://unstar"><img src="file://#{cssdir}/star2.svg" width="14px"></a>&nbsp;|&nbsp;
 <?py else: ?>
-    <a href="cmd://star">Star</a>&nbsp;|&nbsp;
+    <a href="cmd://star"><img src="file://#{cssdir}/star.svg" width="14px"></a>&nbsp;|&nbsp;
 <?py #end ?>
     <a href="#{post.url}">Complete Story</a>
 </div>
