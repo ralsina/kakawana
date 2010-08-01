@@ -8,5 +8,7 @@
     <file>icons/player_pause.svg</file>
     <file>icons/star.svg</file>
     <file>icons/star2.svg</file>
+    <file>icons/urssus.svg</file>
+    <file>icons/urssus-unread.svg</file>
   </qresource>
 </RCC>
