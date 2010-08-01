@@ -10,5 +10,6 @@
     <file>icons/star2.svg</file>
     <file>icons/urssus.svg</file>
     <file>icons/urssus-unread.svg</file>
+    <file>icons/feed.svg</file>
   </qresource>
 </RCC>

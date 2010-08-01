@@ -364,6 +364,7 @@ class Main(QtGui.QMainWindow):
             #order_by("date desc").limit(50)
         fitem = QtGui.QTreeWidgetItem(['',"Recent"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+        fitem.setIcon(0,QtGui.QIcon(':/icons/feed.svg'))
         fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -1
         self.ui.feeds.addTopLevelItem(fitem)
@@ -377,6 +378,7 @@ class Main(QtGui.QMainWindow):
         #posts = backend.Post.query.filter(backend.Post.star==True)
         fitem = QtGui.QTreeWidgetItem(['',"Starred"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+        fitem.setIcon(0,QtGui.QIcon(':/icons/feed.svg'))        
         fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -2
         self.ui.feeds.addTopLevelItem(fitem)
@@ -389,6 +391,7 @@ class Main(QtGui.QMainWindow):
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             fitem=QtGui.QTreeWidgetItem(['',backend.h2t('%s (%d)'%(feed.name,unread_count))])
+            fitem.setIcon(0,QtGui.QIcon(':/icons/feed.svg'))
             if unread_count:
                 fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
                 fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
