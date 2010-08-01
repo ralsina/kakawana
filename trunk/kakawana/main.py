@@ -299,7 +299,8 @@ class Main(QtGui.QMainWindow):
                     fitem.insertChild(0, pitem)
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             fitem.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
-            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor(20,20,20)))
+            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor(200,200,200)))
+            fitem.setBackground(1, QtGui.QBrush(QtGui.QColor(200,200,200)))
             if (self.ui.feeds.currentItem() and (fitem in [self.ui.feeds.currentItem(),self.ui.feeds.currentItem().parent()]))  or \
                     self.showAllFeeds or \
                     unread_count:
@@ -327,6 +328,7 @@ class Main(QtGui.QMainWindow):
             #order_by("date desc").limit(50)
         fitem = QtGui.QTreeWidgetItem(['',"Recent"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+        fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -1
         self.ui.feeds.addTopLevelItem(fitem)
         if expandedFeedId == -1:
@@ -339,6 +341,7 @@ class Main(QtGui.QMainWindow):
         #posts = backend.Post.query.filter(backend.Post.star==True)
         fitem = QtGui.QTreeWidgetItem(['',"Starred"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+        fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -2
         self.ui.feeds.addTopLevelItem(fitem)
         if expandedFeedId == -2:
@@ -350,7 +353,13 @@ class Main(QtGui.QMainWindow):
         for feed in feeds:
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             fitem=QtGui.QTreeWidgetItem(['',backend.h2t('%s (%d)'%(feed.name,unread_count))])
-            fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+            if unread_count:
+                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+                fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
+            else:
+                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor(200,200,200)))
+                fitem.setBackground(1, QtGui.QBrush(QtGui.QColor(200,200,200)))
+                
             fitem._id = feed.xmlurl
             self.ui.feeds.addTopLevelItem(fitem)
             if expandedFeedId == feed.xmlurl:
