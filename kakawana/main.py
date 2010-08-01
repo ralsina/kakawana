@@ -85,6 +85,14 @@ def fetcher():
             print 'exception in fetcher:', e
             fetcher_out.put(['updated',cmd[1],{}])
 
+class TrayIcon(QtGui.QSystemTrayIcon):
+    "Notification area icon"
+
+    def __init__(self, main):
+        QtGui.QSystemTrayIcon.__init__ (self,
+            QtGui.QIcon(":/icons/urssus.svg"))
+        self.main = main
+
 # Create a class for our main window
 class Main(QtGui.QMainWindow):
     def __init__(self):
@@ -107,6 +115,10 @@ class Main(QtGui.QMainWindow):
         #QtWebKit.QWebSettings.globalSettings().\
             #setAttribute(QtWebKit.QWebSettings.PluginsEnabled, True)
 
+        # Tray Icon
+        self.tray=TrayIcon(self)
+        self.tray.show()
+        self.tray.activated.connect(self.trayActivated)
 
         # Fix column widths in feed list
         header=self.ui.feeds.header()
@@ -145,6 +157,15 @@ class Main(QtGui.QMainWindow):
         self.scheduled_updates = QtCore.QTimer()
         self.scheduled_updates.timeout.connect(self.updateOneFeed)
         self.scheduled_updates.start(30000)
+
+    def trayActivated(self, reason):
+        if reason == None: return
+        if reason == self.tray.Trigger:
+            if self.isVisible():
+                self.hide()
+            else:
+                self.show()
+                self.raise_()
 
     def on_actionMark_All_As_Read_triggered(self, b=None):
         '''Mark all visible posts in the current feed as read'''
@@ -850,6 +871,7 @@ def main():
     backend.initDB()
     
     app = QtGui.QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
     window=Main()
     window.show()
     # It's exec_ because exec is a reserved word in Python
