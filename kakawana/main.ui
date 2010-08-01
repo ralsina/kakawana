@@ -298,6 +298,28 @@
     <string>Keep Google Synced</string>
    </property>
   </action>
+  <action name="actionStar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/star2.svg</normaloff>
+     <normalon>:/icons/star.svg</normalon>
+     <disabledoff>:/icons/star2.svg</disabledoff>
+     <disabledon>:/icons/star.svg</disabledon>
+     <activeoff>:/icons/star2.svg</activeoff>
+     <activeon>:/icons/star.svg</activeon>
+     <selectedoff>:/icons/star2.svg</selectedoff>
+     <selectedon>:/icons/star.svg</selectedon>:/icons/star2.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Star</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

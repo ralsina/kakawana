@@ -121,6 +121,7 @@ class Main(QtGui.QMainWindow):
         self.addAction(self.ui.actionSpace)
         self.addAction(self.ui.actionNext)
         self.addAction(self.ui.actionPrevious)
+        self.addAction(self.ui.actionStar)
 
         self.ui.html.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateExternalLinks)
         self.ui.html.page().linkClicked.connect(self.linkClicked)
@@ -183,8 +184,26 @@ class Main(QtGui.QMainWindow):
             # Post commands
             elif cmd == 'keep-unread':
                 self.actionKeep_Unread.trigger()
+
+            elif cmd == 'star':
+                self.actionStar.setChecked(True)
+            elif cmd == 'unstar':
+                self.actionStar.setChecked(False)
+                
         else:
             QtGui.QDesktopServices.openUrl(url)
+
+    def updateStarredFeed(self):
+        '''Updates the 'starred posts' feed'''
+        fitem = self.findFeedItem(-2)
+        existing = set()
+        for j in range (fitem.childCount()):
+            existing.add(fitem.child(j)._id)
+        posts =  backend.Post.query.filter(backend.Post.star==True)
+        for post in posts[::-1]:
+            if post._id not in existing:
+                pitem = post.createItem(None)
+                fitem.insertChild(0,pitem)
 
     def updateRecentFeed(self):
         '''Updates the 'recent posts' feed'''
@@ -215,7 +234,8 @@ class Main(QtGui.QMainWindow):
             self.updateRecentFeed()
             
         elif fitem._id == -2: # Starred
-            pass
+            self.updateStarredFeed()
+            
         else: # Plain feed, do it non-blocking
             feed = backend.Feed.get_by(xmlurl = fitem._id)
             if feed:
@@ -381,7 +401,7 @@ class Main(QtGui.QMainWindow):
         if scrollTo:
             self.ui.feeds.scrollToItem(scrollTo)
 
-    def on_feeds_itemClicked(self, item=None):
+    def on_feeds_itemClicked(self, item=None, column=1):
         if item is None: return
         fitem = item.parent()
         if fitem: # Post
@@ -464,6 +484,10 @@ class Main(QtGui.QMainWindow):
                 self.enclosureContainer.hide()
             
             p.read=True
+            if column == 0:
+                print 'Star clicked setting to:', not p.star
+                p.star = not p.star
+            
             backend.saveData()
             
             item.setForeground(1, QtGui.QBrush(QtGui.QColor("lightgray")))
@@ -768,6 +792,21 @@ class Main(QtGui.QMainWindow):
         post.read = False
         backend.saveData()
         self.refreshFeeds()
+
+    def on_actionStar_toggled(self, b=None):
+        '''Mark the current post as unread'''
+        # FIXME this **can** be called without the item being current
+        # if the user calls it from the page link, so it should take an ID
+        # as optional argument
+        if b is None: return
+        item = self.ui.feeds.currentItem()
+        if not item.parent(): return # Not a post
+        post = backend.Post.get_by(_id = item._id)
+        if not post: return
+        post.star = b
+        backend.saveData()
+        self.refreshFeeds()
+
 
     def on_actionDelete_Feed_activated(self, b=None):
         '''Unsubscribe from current feed'''
