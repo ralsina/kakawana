@@ -22,7 +22,11 @@
 Posted at #{utc2local(post.date)} 
   <div id="postcmds">
     |&nbsp;<a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
+<?py if post.star: ?>
+    <a href="cmd://unstar">Remove Star</a>&nbsp;|&nbsp;
+<?py else: ?>
     <a href="cmd://star">Star</a>&nbsp;|&nbsp;
+<?py #end ?>
     <!-- AddToAny BEGIN -->
     <a href="http://www.addtoany.com/share_save?linkurl=#{escapedposturl}&amp;linkname=#{escapedposttitle}"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" width="171" height="16" border="0" alt="Share/Bookmark"/></a>
   </div>
@@ -47,7 +51,11 @@ Posted at #{utc2local(post.date)}
 <?py #end ?>
 <div id="postbar2">
     <a href="cmd://keep-unread">Keep Unread</a>&nbsp;|&nbsp;
+<?py if post.star: ?>
+    <a href="cmd://unstar">Remove Star</a>&nbsp;|&nbsp;
+<?py else: ?>
     <a href="cmd://star">Star</a>&nbsp;|&nbsp;
+<?py #end ?>
     <a href="#{post.url}">Complete Story</a>
 </div>
 </div>
