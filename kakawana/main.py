@@ -196,8 +196,7 @@ class Main(QtGui.QMainWindow):
     def updateStarredFeed(self):
         '''Updates the 'starred posts' feed'''
         fitem = self.findFeedItem(-2)
-        for j in range (fitem.childCount()):
-            fitem.takeChildren()
+        fitem.takeChildren()
         posts =  backend.Post.query.filter(backend.Post.star==True)
         for post in posts:
             pitem = post.createItem(fitem)
@@ -205,16 +204,11 @@ class Main(QtGui.QMainWindow):
     def updateRecentFeed(self):
         '''Updates the 'recent posts' feed'''
         fitem = self.findFeedItem(-1)
-        existing = set()
-        for j in range (fitem.childCount()):
-            existing.add(fitem.child(j)._id)
+        fitem.takeChildren()
         posts =  backend.Post.query.filter(backend.Post.read==False).\
             order_by("date desc").limit(10).all()
-        for post in posts[::-1]:
-            if post._id not in existing and ((not post.read)
-                    or self.showAllPosts):
-                pitem = post.createItem(None)
-                fitem.insertChild(0,pitem)
+        for post in posts:
+            pitem = post.createItem(fitem)
 
     def updateCurrentFeed(self):
         '''Launches a forced update for the current feed.
