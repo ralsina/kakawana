@@ -98,7 +98,11 @@ class Main(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
 
-        # Settings
+        # Load settings
+        self.settings=QtCore.QSettings("ralsina", "Kakawana")
+        self.restoreGeometry(self.settings.value("geometry").toByteArray())
+        self.restoreState(self.settings.value("state").toByteArray())
+
         self.mode = 0
         self.showAllFeeds = False
         self.showAllPosts = False
@@ -873,6 +877,7 @@ class Main(QtGui.QMainWindow):
 
     def on_actionQuit_activated(self, b=None):
         if b is not None: return
+        self.close()
         QtCore.QCoreApplication.instance().quit()
 
     def on_actionAbout_Kakawana_activated(self, b=None):
@@ -882,6 +887,11 @@ class Main(QtGui.QMainWindow):
         Author: Roberto Alsina <ralsina@netmanagers.com.ar>
         Site: http://kakawana.googlecode.com
         """)
+
+    def closeEvent(self, event):
+        self.settings.setValue('geometry', self.saveGeometry())
+        self.settings.setValue('state', self.saveState())
+        QtGui.QMainWindow.closeEvent(self, event)
 
 def main():
     # Init the database before doing anything else
