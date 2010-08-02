@@ -506,6 +506,10 @@ class Main(QtGui.QMainWindow):
             if column == 0:
                 print 'Star clicked setting to:', not p.star
                 p.star = not p.star
+                if p.star:
+                    item.setIcon(0,QtGui.QIcon(':/icons/star.svg'))
+                else:
+                    item.setIcon(0,QtGui.QIcon(':/icons/star2.svg'))
             
             backend.saveData()
             
@@ -514,6 +518,11 @@ class Main(QtGui.QMainWindow):
                 item = self.findPostItem(p)
             if item:
                 item.setForeground(1, QtGui.QBrush(QtGui.QColor("lightgray")))
+                if p.star:
+                    item.setIcon(0,QtGui.QIcon(':/icons/star.svg'))
+                else:
+                    item.setIcon(0,QtGui.QIcon(':/icons/star2.svg'))
+
             # Update unread count
             self.updateFeed(p.feed.xmlurl)
         else: # Feed
