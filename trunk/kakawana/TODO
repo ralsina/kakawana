@@ -1,0 +1,26 @@
+====
+TODO
+====
+
+Things that should be done before there is a release:
+-----------------------------------------------------
+
+* Editing feed properties
+* Track feed errors and give feed diagnostics
+* Better startup speed
+* Fix "mark-unread closes the feed" bug
+* Better social sharing
+* setup.py and stuff
+* OPML import/export
+* General UI review
+* "Feed decides" mode
+* Integrate offline mode (per-feed?)
+* Feed icons as they were in uRSSus
+
+Things that would be nice to have:
+----------------------------------
+
+* Syncing item read/unread status with greader
+* Windows binaries
+* Tags
+
