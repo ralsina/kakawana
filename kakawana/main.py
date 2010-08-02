@@ -359,12 +359,11 @@ class Main(QtGui.QMainWindow):
         scrollTo = None
         feeds=backend.Feed.query.order_by('name').all()
         self.ui.feeds.clear()
+        self.feed_icon = QtGui.QIcon(':/icons/feed.svg') 
         # Add "some recent"
-        #posts =  backend.Post.query.filter(backend.Post.read==False).\
-            #order_by("date desc").limit(50)
         fitem = QtGui.QTreeWidgetItem(['',"Recent"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
-        fitem.setIcon(0,QtGui.QIcon(':/icons/feed.svg'))
+        fitem.setIcon(0,self.feed_icon)
         fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -1
         self.ui.feeds.addTopLevelItem(fitem)
@@ -378,7 +377,7 @@ class Main(QtGui.QMainWindow):
         #posts = backend.Post.query.filter(backend.Post.star==True)
         fitem = QtGui.QTreeWidgetItem(['',"Starred"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
-        fitem.setIcon(0,QtGui.QIcon(':/icons/feed.svg'))        
+        fitem.setIcon(0, self.feed_icon)
         fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem._id = -2
         self.ui.feeds.addTopLevelItem(fitem)
@@ -387,11 +386,16 @@ class Main(QtGui.QMainWindow):
             
         #for post in posts:
             #pitem=post.createItem(fitem)
-        
+
+        i=0
+        # FIXME: this does a lot of unnecesary work
         for feed in feeds:
-            unread_count = len(filter(lambda p: not p.read, feed.posts))
+            i+=1
+            if  i%5==0:
+                QtCore.QCoreApplication.instance().processEvents()
+            unread_count = backend.Post.query.filter_by(feed=feed, read=False).count()
             fitem=QtGui.QTreeWidgetItem(['',backend.h2t('%s (%d)'%(feed.name,unread_count))])
-            fitem.setIcon(0,QtGui.QIcon(':/icons/feed.svg'))
+            fitem.setIcon(0,self.feed_icon)
             if unread_count:
                 fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
                 fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
