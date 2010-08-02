@@ -16,6 +16,10 @@ Things that should be done before there is a release:
 * "Feed decides" mode
 * Integrate offline mode (per-feed?)
 * Feed icons as they were in uRSSus
+* Improve the whole "add feed" process
+  
+  * Add feedback of operation
+  * Handle timeouts and missing feeds
 
 Things that would be nice to have:
 ----------------------------------
