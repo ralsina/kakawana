@@ -634,6 +634,7 @@ class Main(QtGui.QMainWindow):
 
     def refreshFeeds(self):
         '''Like a loadFeeds, but always keeps the current one open'''
+        # FIXME: this is very inefficient
         item = self.ui.feeds.currentItem()
         _id = None
         _pid = None
