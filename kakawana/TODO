@@ -21,6 +21,15 @@ Things that should be done before there is a release:
   * Add feedback of operation
   * Handle timeouts and missing feeds
 
+* Finish implementing enclosure support
+ 
+  * Remember position in podcasts
+  * Add special "Podcasts you are listening" folder
+  * Implement prefetching (per feed)
+  * Implement fetching (per item)
+  * Resize videowidget
+  * Implement generic "download/open" handler
+
 Things that would be nice to have:
 ----------------------------------
 
