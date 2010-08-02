@@ -228,7 +228,10 @@ class Post(Entity):
         return p
 
     def createItem(self, fitem):
-        pitem=QtGui.QTreeWidgetItem(fitem,['',h2t(self.title) or unicode(self.date)])
+        text = h2t(self.title) or unicode(self.date)
+        pitem=QtGui.QTreeWidgetItem(fitem,['',text])
+        pitem.setToolTip(0,text)
+        pitem.setToolTip(1,text)
         if self.read:
             pitem.setForeground(1, QtGui.QBrush(QtGui.QColor("lightgray")))
         else:
