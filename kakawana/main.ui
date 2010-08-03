@@ -135,6 +135,7 @@
     <addaction name="separator"/>
     <addaction name="actionEdit_Feed"/>
     <addaction name="actionDelete_Feed"/>
+    <addaction name="actionSync_Read_Items"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -322,6 +323,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="actionSync_Read_Items">
+   <property name="text">
+    <string>Sync Read Items</string>
    </property>
   </action>
  </widget>
