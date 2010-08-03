@@ -162,6 +162,51 @@ class Main(QtGui.QMainWindow):
         self.scheduled_updates.timeout.connect(self.updateOneFeed)
         self.scheduled_updates.start(30000)
 
+        self.googleList=[]
+
+    def on_actionSync_Read_Items_activated(self, b=None):
+        '''Fetches the readingList from google and marks all known
+        articles as read. Saves that list as self.googleList'''
+
+        if b is not None: return
+        progress = QtGui.QProgressDialog(self)
+        progress.setLabelText(self.tr('Connecting to Google Reader'))
+        progress.show()
+        progress.setAutoClose(True)
+        QtCore.QCoreApplication.processEvents()
+        
+        reader = self.getGoogleReader()
+        userJson = reader.httpGet(reader.READING_LIST_URL, {'n':5000})
+        allPosts = json.loads(userJson, strict=False)['items']
+        userInfo = reader.getUserInfo()
+        readtag = u'user/%s/state/com.google/read'%userInfo['userId']
+        changedFeeds = set()
+        progress.setLabelText(self.tr('Syncing'))
+        progress.setMaximum(len(allPosts))
+        for i,p in enumerate(allPosts):
+            progress.setValue(i)
+            if i%10 == 0:
+                QtCore.QCoreApplication.processEvents()
+            if progress.wasCanceled():
+                break
+            if readtag in p['categories']:
+                # It's read
+                p2 = backend.Post.get_by(url=p['alternate'][0]['href'])
+                f1 = backend.Feed.get_by(xmlurl=p['origin']['streamId'][5:])
+                if p2 and f1 and p2.feed == f1 and p2.read==False:
+                    p2.read = True
+                    print 'Marking post: ', p2._id
+                    if f1 not in changedFeeds:
+                        changedFeeds.add(f1)
+                elif not p2:
+                    print "Can't find post:", p['alternate']
+        self.googleList = allPosts
+        backend.saveData()
+        progress.close()
+        # Update all changed feeds in the UI
+        # FIXME: this can be made smarter
+        self.refreshFeeds()
+
     def trayActivated(self, reason):
         if reason == None: return
         if reason == self.tray.Trigger:
@@ -789,11 +834,12 @@ class Main(QtGui.QMainWindow):
         for f in backend.Feed.query.all():
             if f.xmlurl not in g_feed_dict:
                 new_here.append([f.xmlurl, f.name])
-        #print 'New here:', new_here
+        print 'New here: %d feeds'%len(new_here)
         # FIXME: don't aways do this
         reader = self.getGoogleReader2()
         if reader:
             for xmlurl, name in new_here:
+                print 'Adding to gogle:', xmlurl, name
                 reader.subscribe_feed(xmlurl, name)
 
         # Check what feeds have been deleted here since last sync:
