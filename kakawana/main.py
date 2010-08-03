@@ -801,7 +801,13 @@ class Main(QtGui.QMainWindow):
     def on_actionShow_All_Posts_toggled(self, b=None):
         print 'SAP:', b
         self.showAllPosts = b
-        self.refreshFeeds()
+        item = self.ui.feeds.currentItem()
+        fitem = item.parent()
+        if not fitem:
+            fitem = item
+        if fitem._id in (-1,-2):
+            return        
+        self.on_feeds_itemClicked(item=fitem, column=1)
 
     def on_actionShow_All_Feeds_toggled(self, b=None):
         print 'SAF:', b 
