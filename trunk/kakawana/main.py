@@ -71,14 +71,14 @@ def fetcher():
                         modified = cmd[3].timetuple())
                     if 'bozo_exception' in f:
                         f['bozo_exception'] = None
-                    fetcher_out.put(['updated',cmd[1],f])
+                    fetcher_out.put(['updated',cmd[1],backend.sanitize(f)])
                     print 'Done'
                 elif cmd[0] == 'add':
                     print 'Adding:', cmd[1],'...'
                     f=feedparser.parse(cmd[1])
                     if 'bozo_exception' in f:
                         f['bozo_exception'] = None
-                    fetcher_out.put(['added',cmd[1],f])
+                    fetcher_out.put(['added',cmd[1],backend.sanitize(f)])
                     print 'Done'
                 
         except Exception as e:
@@ -186,8 +186,10 @@ class Main(QtGui.QMainWindow):
             if _id:
                 post = backend.Post.get_by(_id=_id)
                 post.read = True
+                if not self.showAllPosts:
+                    fitem.child(i).setHidden(True)
         backend.saveData()
-        self.refreshFeeds()
+        self.on_feeds_itemClicked(item=fitem, column=1)
 
     def linkClicked(self,url):
         if unicode(url.scheme()) == 'cmd':
@@ -198,7 +200,7 @@ class Main(QtGui.QMainWindow):
             # Feed commands
             if cmd == 'mark-all-read':
                 print 'Triggering mark-all-read'
-                self.ui.actionMark_All_As_Read.trigger()
+                self.ui.on_actionMark_All_As_Read_triggered()
                 
             elif cmd == 'refresh':
                 self.updateCurrentFeed()
@@ -543,8 +545,9 @@ class Main(QtGui.QMainWindow):
                 # Opening closed feed, so clean up first, then
                 # refill
                 if feed:
-                    for i in range(item.childCount()):
-                        item.removeChild(item.child(0))
+                    item.takeChildren()
+                    #for i in range(item.childCount()):
+                        #item.removeChild(item.child(0))
                     c = 0
                     for i,post in enumerate(feed.posts):
                         if post.read == False or self.showAllPosts:
@@ -554,6 +557,27 @@ class Main(QtGui.QMainWindow):
                                 QtCore.QCoreApplication.instance().processEvents()
                         if c > 100:
                             break
+            elif feed: # Update the feed contents
+                items = {}
+                for i in range(item.childCount()):
+                    items[item.child(i)._id]=item
+                for i,post in enumerate(feed.posts):
+                    if i%10==0:
+                        QtCore.QCoreApplication.instance().processEvents()
+                    if post.read == False or self.showAllPosts:
+                        # Should be visible
+                        
+                        if post._id not in items:
+                            # But it's not there
+                            pitem=post.createItem(item)
+                            if item.childCount() > 100:
+                                break
+                    else:
+                        # Should not be visible
+                        if post._id in items:
+                            # It *is* visible
+                            print 'hiding:', post._id
+                            items[post._id].setHidden(True)
                 
             if feed:
                 # Timeline data structure
