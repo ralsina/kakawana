@@ -193,7 +193,6 @@ class Feed(Entity):
             if p.date < self.oldest_fresh:
                 self.oldest_fresh = p.date
         saveData()
-        
 
 class Post(Entity):
     '''Everything in the feed'''

@@ -410,7 +410,9 @@ class Main(QtGui.QMainWindow):
         scrollTo = None
         feeds=backend.Feed.query.order_by('name').all()
         self.ui.feeds.clear()
-        self.feed_icon = QtGui.QIcon(':/icons/feed.svg') 
+        self.feed_icon = QtGui.QIcon(':/icons/feed.svg')
+        self.warning_icon = QtGui.QIcon(':/icons/warning.svg')
+        self.error_icon = QtGui.QIcon(':/icons/error.svg')
         # Add "some recent"
         fitem = QtGui.QTreeWidgetItem(['',"Recent"])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
@@ -446,7 +448,12 @@ class Main(QtGui.QMainWindow):
                 QtCore.QCoreApplication.instance().processEvents()
             unread_count = backend.Post.query.filter_by(feed=feed, read=False).count()
             fitem=QtGui.QTreeWidgetItem(['',backend.h2t('%s (%d)'%(feed.name,unread_count))])
-            fitem.setIcon(0,self.feed_icon)
+            if feed.bad_check_count > 5:
+                fitem.setIcon(0,self.error_icon)
+            elif feed.last_status == 301:
+                fitem.setIcon(0,self.warning_icon)
+            else:
+                fitem.setIcon(0,self.feed_icon)
             if unread_count:
                 fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
                 fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
