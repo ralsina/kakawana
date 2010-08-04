@@ -30,3 +30,9 @@
 html { font-size: 100%; font-family: sans-serif; }
 body { margin: 12px; }
 blockquote { padding: 4px 0 4px 0; }
+a:link { text-decoration: none; color: #36c; }
+a:visited { text-decoration: none; color: #36c; }
+a:hover { text-decoration: none; color: #36c; }
+a:active, a:focus { text-decoration: underline; color: #000; }
+code, pre { color: #000; } /*** very optional, but still useful. W3C uses about the same colors for codes ***/
+
