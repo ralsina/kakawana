@@ -98,6 +98,9 @@ class Feed(Entity):
     '''How many bad checks in a row'''
     mode = Field(Integer, default=1)
     '''Mode to use to display the feed'''
+    oldest_fresh = Field(DateTime, required=False, default=datetime.datetime(1970,1,1))
+    '''Date of the oldest fresh item. You can't expire newer than this because
+    they just get re-fetched'''
     
     def __repr__(self):
         return "Feed: %s <%s>"%(self.name, self.url)
@@ -175,9 +178,12 @@ class Feed(Entity):
         if 'etag' in feed:
             self.etag = feed['etag']
 
+        self.oldest_fresh=datetime.datetime.now()
         for post in feed['entries']:
             p=Post.get_or_create(post)
             self.posts.append(p)
+            if p.date < self.oldest_fresh:
+                self.oldest_fresh = p.date
         saveData()
         
 
