@@ -590,6 +590,28 @@ class Main(QtGui.QMainWindow):
         else: # Feed
             self.updateCurrentFeed()
             feed=backend.Feed.get_by(xmlurl=item._id)
+            if feed:
+                # Timeline data structure
+                tdata={}
+                #tdata['events']=[{
+                #    'start': p.date.strftime(r"%b %d %Y %H:%M:00 GMT"),
+                #    'title': p.title,
+                #    'link': p.url,
+                #    } for p in feed.posts]
+                data = pickle.loads(base64.b64decode(feed.data))
+                if 'status' in data:
+                    status = data['status']
+                else:
+                    status = 'Unknown'
+                self.ui.html.setHtml(renderTemplate('feed.tmpl',
+                    timelinedata = json.dumps(tdata),
+                    feed = feed,
+                    cssdir = tmplDir,
+                    status = status,
+                    ))
+            else:
+                self.ui.html.setHtml("")
+
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
                 item.setExpanded(True)
@@ -613,7 +635,7 @@ class Main(QtGui.QMainWindow):
                 items = {}
                 for i in range(item.childCount()):
                     items[item.child(i)._id]=item
-                for i,post in enumerate(feed.posts):
+                for i,post in enumerate(feed.posts[:100]):
                     if i%10==0:
                         QtCore.QCoreApplication.instance().processEvents()
                     if post.read == False or self.showAllPosts:
@@ -622,8 +644,8 @@ class Main(QtGui.QMainWindow):
                         if post._id not in items:
                             # But it's not there
                             pitem=post.createItem(item)
-                            if item.childCount() > 100:
-                                break
+                            #if item.childCount() > 100:
+                                #break
                     else:
                         # Should not be visible
                         if post._id in items:
@@ -631,28 +653,6 @@ class Main(QtGui.QMainWindow):
                             print 'hiding:', post._id
                             items[post._id].setHidden(True)
                 
-            if feed:
-                # Timeline data structure
-                tdata={}
-                #tdata['events']=[{
-                #    'start': p.date.strftime(r"%b %d %Y %H:%M:00 GMT"),
-                #    'title': p.title,
-                #    'link': p.url,
-                #    } for p in feed.posts]
-                data = pickle.loads(base64.b64decode(feed.data))
-                if 'status' in data:
-                    status = data['status']
-                else:
-                    status = 'Unknown'
-                self.ui.html.setHtml(renderTemplate('feed.tmpl',
-                    timelinedata = json.dumps(tdata),
-                    feed = feed,
-                    cssdir = tmplDir,
-                    status = status,
-                    ))
-            else:
-                self.ui.html.setHtml("")
-            
         # FIXME: should hide read items if they shouldn't be displayed
 
     def on_actionNew_Feed_triggered(self, b=None):
