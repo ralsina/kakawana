@@ -669,6 +669,11 @@ class Main(QtGui.QMainWindow):
         url=unicode(url)
         feeds=[]
         feedurls=feedfinder.feeds(url)
+        if not feedurls:
+            # Didn't find any feeds
+            QtGui.QMessageBox.critical(self, self.tr("Kakawana - Error"),
+                self.tr("Couldn't find any feeds at that URL."))
+            return
         for furl in feedurls:
             f=feedparser.parse(furl)
             feeds.append(f)
