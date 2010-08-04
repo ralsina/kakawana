@@ -363,38 +363,31 @@ class Main(QtGui.QMainWindow):
 
     def updateFeed(self, feed_id):
         # feed_id is a Feed.xmlurl, which is also item._id
-        # FIXME: hide read posts if needed
         fitem = self.findFeedItem(feed_id)
         if fitem:
-            # This is the one to update
             feed = backend.Feed.get_by(xmlurl = feed_id)
-            # Get the ids of the existing items
-            existing = set()
-            for j in range (fitem.childCount()):
-                existing.add(fitem.child(j)._id)
+            if fitem == self.feeds.currentItem():
+                # It's the current item, needs to have its children displayed
+                self.showFeedPosts(fitem, feed)
 
-            posts = feed.posts[::-1]
-            for post in posts:
-                # If it's not there, add it
-                if post._id not in existing and (
-                        post.read == False or self.showAllPosts):
-                    pitem=post.createItem(None)
-                    fitem.insertChild(0, pitem)
-            unread_count = len(filter(lambda p: not p.read, feed.posts))
-            fitem.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
-            if unread_count:
-                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
-                fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
             else:
-                fitem.setBackground(0, QtGui.QBrush(QtGui.QColor(200,200,200)))
-                fitem.setBackground(1, QtGui.QBrush(QtGui.QColor(200,200,200)))
-            if (self.ui.feeds.currentItem() and (fitem in [self.ui.feeds.currentItem(),self.ui.feeds.currentItem().parent()]))  or \
-                    self.showAllFeeds or \
-                    unread_count:
-                fitem.setHidden(False)
-            else:
-                fitem.setHidden(True)
-
+                # It's not the current item, just show the item count
+                
+                # This is the one to update
+                unread_count = len(filter(lambda p: not p.read, feed.posts))
+                fitem.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
+                if unread_count:
+                    fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
+                    fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
+                else:
+                    fitem.setBackground(0, QtGui.QBrush(QtGui.QColor(200,200,200)))
+                    fitem.setBackground(1, QtGui.QBrush(QtGui.QColor(200,200,200)))
+                if (self.ui.feeds.currentItem() and (fitem in [self.ui.feeds.currentItem(),self.ui.feeds.currentItem().parent()]))  or \
+                        self.showAllFeeds or \
+                        unread_count:
+                    fitem.setHidden(False)
+                else:
+                    fitem.setHidden(True)
         else:
             # This is actually a new feed, so reload
             # feed list
@@ -618,19 +611,7 @@ class Main(QtGui.QMainWindow):
                 
                 # Opening closed feed, so clean up first, then
                 # refill
-                if feed:
-                    item.takeChildren()
-                    #for i in range(item.childCount()):
-                        #item.removeChild(item.child(0))
-                    c = 0
-                    for i,post in enumerate(feed.posts):
-                        if post.read == False or self.showAllPosts:
-                            pitem=post.createItem(item)
-                            c+=1
-                            if i%10==0:
-                                QtCore.QCoreApplication.instance().processEvents()
-                        if c > 100:
-                            break
+                self.showFeedPosts(item, feed)
             elif feed: # Update the feed contents
                 items = {}
                 for i in range(item.childCount()):
@@ -654,6 +635,24 @@ class Main(QtGui.QMainWindow):
                             items[post._id].setHidden(True)
                 
         # FIXME: should hide read items if they shouldn't be displayed
+
+    def showFeedPosts(self, item, feed):
+        '''Given a feed and an item, it shows the feed's posts as
+        children of the item'''
+        if feed:
+            item.takeChildren()
+            #for i in range(item.childCount()):
+                #item.removeChild(item.child(0))
+            c = 0
+            if self.showAllPosts:
+                postList = backend.Post.query.filter_by(feed=feed).limit(100)
+            else:
+                postList = backend.Post.query.filter_by(feed=feed, read=False).limit(100)
+            for i,post in enumerate(postList):
+                pitem=post.createItem(item)
+                if i%5==0:
+                    QtCore.QCoreApplication.instance().processEvents()
+
 
     def on_actionNew_Feed_triggered(self, b=None):
         '''Ask for site or feed URL and add it to backend'''
