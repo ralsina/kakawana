@@ -953,11 +953,15 @@ class Main(QtGui.QMainWindow):
 
             # May need to delete feed from google
             if self.keepGoogleSynced:
-                # Add this feed to google reader
-                reader = self.getGoogleReader2()
-                if reader:
-                    print 'Unsubscribing at google: ', fitem._id
-                    reader.unsubscribe_feed(fitem._id)
+                try:
+                    # Add this feed to google reader
+                    reader = self.getGoogleReader2()
+                    if reader:
+                        print 'Unsubscribing at google: ', fitem._id
+                        reader.unsubscribe_feed(fitem._id)
+                except Exception, e:
+                    # I'm not going to worry if this fails
+                    print e
             self.loadFeeds()
 
     def on_actionKeep_Google_Synced_toggled(self, b):
