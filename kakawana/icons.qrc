@@ -11,5 +11,7 @@
     <file>icons/urssus.svg</file>
     <file>icons/urssus-unread.svg</file>
     <file>icons/feed.svg</file>
+    <file>icons/warning.svg</file>
+    <file>icons/error.svg</file>
   </qresource>
 </RCC>
