@@ -128,6 +128,9 @@ class Main(QtGui.QMainWindow):
         header=self.ui.feeds.header()
         header.setResizeMode(0, QtGui.QHeaderView.Fixed)
         header.resizeSection(0, 24)
+        self.feeds.setSortingEnabled(True)
+        self.feeds.sortItems(2, QtCore.Qt.DescendingOrder)
+        header.hideSection(2)
 
         self.enclosureLayout = QtGui.QVBoxLayout(self.enclosureContainer)
         self.enclosureContainer.setLayout(self.enclosureLayout)
@@ -407,7 +410,7 @@ class Main(QtGui.QMainWindow):
         self.warning_icon = QtGui.QIcon(':/icons/warning.svg')
         self.error_icon = QtGui.QIcon(':/icons/error.svg')
         # Add "some recent"
-        fitem = QtGui.QTreeWidgetItem(['',"Recent"])
+        fitem = QtGui.QTreeWidgetItem(['',"Recent",'BB'])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem.setIcon(0,self.feed_icon)
         fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
@@ -421,7 +424,7 @@ class Main(QtGui.QMainWindow):
             #pitem = post.createItem(fitem)
 
         #posts = backend.Post.query.filter(backend.Post.star==True)
-        fitem = QtGui.QTreeWidgetItem(['',"Starred"])
+        fitem = QtGui.QTreeWidgetItem(['',"Starred",'BA'])
         fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
         fitem.setIcon(0, self.feed_icon)
         fitem.setBackground(1, QtGui.QBrush(QtGui.QColor("lightgreen")))
@@ -440,7 +443,9 @@ class Main(QtGui.QMainWindow):
             if  i%5==0:
                 QtCore.QCoreApplication.instance().processEvents()
             unread_count = backend.Post.query.filter_by(feed=feed, read=False).count()
-            fitem=QtGui.QTreeWidgetItem(['',backend.h2t('%s (%d)'%(feed.name,unread_count))])
+            tt=backend.h2t(feed.name)
+            tt2='A%04s'%(len(feeds)-i)
+            fitem=QtGui.QTreeWidgetItem(['','%s (%d)'%(tt,unread_count),tt2])
             if feed.bad_check_count > 5:
                 fitem.setIcon(0,self.error_icon)
             elif feed.last_status == 301:

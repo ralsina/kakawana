@@ -247,7 +247,7 @@ class Post(Entity):
 
     def createItem(self, fitem):
         text = h2t(self.title) or unicode(self.date)
-        pitem=QtGui.QTreeWidgetItem(fitem,['',text])
+        pitem=QtGui.QTreeWidgetItem(fitem,['',text,unicode(self.date)])
         pitem.setToolTip(0,text)
         pitem.setToolTip(1,text)
         if self.read:
