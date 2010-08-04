@@ -231,8 +231,8 @@ class Main(QtGui.QMainWindow):
             if _id:
                 post = backend.Post.get_by(_id=_id)
                 post.read = True
-                if not self.showAllPosts:
-                    fitem.child(i).setHidden(True)
+        if not self.showAllPosts:
+            fitem.takeChildren()
         backend.saveData()
         self.on_feeds_itemClicked(item=fitem, column=1)
 
