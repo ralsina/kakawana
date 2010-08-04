@@ -469,14 +469,7 @@ class Main(QtGui.QMainWindow):
                 fitem.setHidden(False)
             else:
                 fitem.setHidden(True)
-
-            #for post in feed.posts:
-                #if post.read == False or self.showAllPosts or \
-                        #post._id == currentItemId:
-                    #pitem=post.createItem(fitem)
-                    #if pitem._id == currentItemId:
-                        #self.ui.feeds.setCurrentItem(pitem)
-                        #scrollTo = pitem
+                
         if scrollTo:
             self.ui.feeds.scrollToItem(scrollTo)
 
@@ -612,16 +605,17 @@ class Main(QtGui.QMainWindow):
 
             if not item.isExpanded():
                 self.ui.feeds.collapseAll()
+                item.takeChildren()
                 item.setExpanded(True)
-                
-                # Opening closed feed, so clean up first, then
-                # refill
             self.showFeedPosts(item, feed)
 
     def showFeedPosts(self, item, feed):
         '''Given a feed and an item, it shows the feed's posts as
         children of the item, and updates what the feed item shows'''
         if feed:
+            unread_count = len(filter(lambda p: not p.read, feed.posts))
+            item.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
+
             items = {}
             for i in range(item.childCount()):
                 items[item.child(i)._id]=item
@@ -643,8 +637,6 @@ class Main(QtGui.QMainWindow):
                         #print 'hiding:', post._id
                         #items[post._id].setHidden(True)
 
-            unread_count = len(filter(lambda p: not p.read, feed.posts))
-            item.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
 
 
     def on_actionNew_Feed_triggered(self, b=None):
