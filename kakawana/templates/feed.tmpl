@@ -81,11 +81,32 @@
   
 <div>
 <ul>
-<li>Feed URL: <a href="#{feed.url}">#{feed.url}</a></br>
+<li>Site URL: <a href="#{feed.url}">#{feed.url}</a></br>
+<li>Feed URL: <a href="#{feed.xmlurl}">#{feed.xmlurl}</a></br>
 <?py if feed.posts: ?>
     <li>Last Update: #{feed.posts[0].date}
 <?py #end ?>
-<li>Last Checked: #{feed.check_date} [#{status}]
+<li>Last Checked: #{feed.check_date} [Status: #{feed.last_status}]</li>
+<?py if feed.bad_check_count: ?>
+  <li class="error">Last successful check: #{feed.last_good_check} [Checks failed: #{feed.bad_check_count}]</li>
+<?py #end ?>
+<?py if feed.last_status == 301: ?>
+    <div class="warning"><img style="vertical-align: middle;" height="48px" src="file://#{cssdir}/warning.svg">
+    This status means the feed has moved. It is still working, but it may start
+    to fail later. <a href="cmd://fix-error-301">Click here to find its new location.</a>
+    </div>
+<?py elif feed.last_status == 404: ?>
+    <div class="error"><img style="vertical-align: middle;" height="48px" src="file://#{cssdir}/error.svg">
+    This error means the feed is not at this URL. <a href="cmd://fix-error-404">Click here to find its new location.</a>
+    </div>
+<?py elif feed.last_status == 410: ?>
+    <div class="error"><img style="vertical-align: middle;" height="48px" src="file://#{cssdir}/error.svg">
+    This error means the feed doesn't exist anymore. <a href="cmd://unsubscribe">Click here to unsubscribe.</a>
+    </div>
+<?py else: ?>
+  <div class="ok"><img style="vertical-align: middle;" height="48px" src="file://#{cssdir}/ok.svg">This feed is working correctly.
+  </div>
+<?py #end ?>
 </ul>
 <h3>Recent posts</h3>
 <ul>
