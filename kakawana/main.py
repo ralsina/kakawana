@@ -636,12 +636,12 @@ class Main(QtGui.QMainWindow):
                         pitem=post.createItem(item)
                         #if item.childCount() > 100:
                             #break
-                else:
-                    # Should not be visible
-                    if post._id in items:
-                        # It *is* visible
-                        print 'hiding:', post._id
-                        items[post._id].setHidden(True)
+                #else:
+                    ## Should not be visible
+                    #if post._id in items:
+                        ## It *is* visible
+                        #print 'hiding:', post._id
+                        #items[post._id].setHidden(True)
 
             unread_count = len(filter(lambda p: not p.read, feed.posts))
             item.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
