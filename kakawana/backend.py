@@ -105,6 +105,23 @@ class Feed(Entity):
     def __repr__(self):
         return "Feed: %s <%s>"%(self.name, self.url)
 
+
+    def expire(self):
+        '''Removes all posts in the feed that:
+
+        * Are not starred
+        * Are not newer than self.oldest_fresh
+        * Are older than 2 weeks
+
+        And keeps at least 20 posts, if they are available.
+        '''
+        postList = Post.query.filter(Post.date < self.oldest_fresh).\
+            filter_by(feed = self, star = False).order_by(Post.date).all()
+        if len(postList) > 20:
+            for p in postList[20:]:
+                p.delete()
+        saveData()
+
     @classmethod
     def createFromFPData(cls, url, feed):
         '''
