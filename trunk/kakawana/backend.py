@@ -160,6 +160,14 @@ class Feed(Entity):
         self.data = unicode(base64.b64encode(pickle.dumps(sanitize(feed['feed']))))
 
         if 'status' in feed:
+
+            self.last_status = feed.status
+            if str(feed.status)[0]=='4':
+                # Error
+                self.bad_check_count+=1
+            else: #good check
+                self.last_good_check=datetime.datetime.now()
+            
             if feed.status == 304: # No change
                 print "Got 304 on feed update"
                 saveData()
@@ -222,11 +230,16 @@ class Post(Entity):
         except:
             print 'Error pickling post data', post.id
 
+        if 'id' in post:
+            _id = post.id
+        else:
+            _id = post.link
+
         post_date = datetime.datetime(*post_date[:6])
         p=Post.update_or_create( dict(
             title = post.title,
             url = post.link,
-            _id = post.id,
+            _id = _id,
             date = post_date,
             data = data),
             surrogate = False,
