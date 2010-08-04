@@ -628,15 +628,11 @@ class Main(QtGui.QMainWindow):
                     if post._id not in items:
                         # But it's not there
                         pitem=post.createItem(item)
-                        #if item.childCount() > 100:
-                            #break
-                #else:
-                    ## Should not be visible
-                    #if post._id in items:
-                        ## It *is* visible
-                        #print 'hiding:', post._id
-                        #items[post._id].setHidden(True)
-
+                        
+        elif item._id==-1:
+            self.updateRecentFeed()
+        elif item._id==-2:
+            self.updateStarredFeed()
 
 
     def on_actionNew_Feed_triggered(self, b=None):
