@@ -611,47 +611,35 @@ class Main(QtGui.QMainWindow):
                 
                 # Opening closed feed, so clean up first, then
                 # refill
-                self.showFeedPosts(item, feed)
-            elif feed: # Update the feed contents
-                items = {}
-                for i in range(item.childCount()):
-                    items[item.child(i)._id]=item
-                for i,post in enumerate(feed.posts[:100]):
-                    if i%10==0:
-                        QtCore.QCoreApplication.instance().processEvents()
-                    if post.read == False or self.showAllPosts:
-                        # Should be visible
-                        
-                        if post._id not in items:
-                            # But it's not there
-                            pitem=post.createItem(item)
-                            #if item.childCount() > 100:
-                                #break
-                    else:
-                        # Should not be visible
-                        if post._id in items:
-                            # It *is* visible
-                            print 'hiding:', post._id
-                            items[post._id].setHidden(True)
-                
-        # FIXME: should hide read items if they shouldn't be displayed
+            self.showFeedPosts(item, feed)
 
     def showFeedPosts(self, item, feed):
         '''Given a feed and an item, it shows the feed's posts as
-        children of the item'''
+        children of the item, and updates what the feed item shows'''
         if feed:
-            item.takeChildren()
-            #for i in range(item.childCount()):
-                #item.removeChild(item.child(0))
-            c = 0
-            if self.showAllPosts:
-                postList = backend.Post.query.filter_by(feed=feed).limit(100)
-            else:
-                postList = backend.Post.query.filter_by(feed=feed, read=False).limit(100)
-            for i,post in enumerate(postList):
-                pitem=post.createItem(item)
-                if i%5==0:
+            items = {}
+            for i in range(item.childCount()):
+                items[item.child(i)._id]=item
+            for i,post in enumerate(feed.posts[:100]):
+                if i%10==0:
                     QtCore.QCoreApplication.instance().processEvents()
+                if post.read == False or self.showAllPosts:
+                    # Should be visible
+
+                    if post._id not in items:
+                        # But it's not there
+                        pitem=post.createItem(item)
+                        #if item.childCount() > 100:
+                            #break
+                else:
+                    # Should not be visible
+                    if post._id in items:
+                        # It *is* visible
+                        print 'hiding:', post._id
+                        items[post._id].setHidden(True)
+
+            unread_count = len(filter(lambda p: not p.read, feed.posts))
+            item.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
 
 
     def on_actionNew_Feed_triggered(self, b=None):
