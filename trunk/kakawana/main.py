@@ -150,6 +150,9 @@ class Main(QtGui.QMainWindow):
         self.ui.html.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateExternalLinks)
         self.ui.html.page().linkClicked.connect(self.linkClicked)
 
+        # Show about kakawana on startup
+        self.on_actionAbout_Kakawana_activated()
+        
         self.loadFeeds(-1)
 
         self.modes=QtGui.QComboBox()
@@ -959,11 +962,18 @@ class Main(QtGui.QMainWindow):
 
     def on_actionAbout_Kakawana_activated(self, b=None):
         if b is not None: return
-        QtGui.QMessageBox.about(self, "About Kakawana", """
-        Kakawana is a simple newsreader, with Google Reader syncing.
-        Author: Roberto Alsina <ralsina@netmanagers.com.ar>
-        Site: http://kakawana.googlecode.com
-        """)
+        self.ui.html.setHtml (
+            '''
+<body style="font-family: sans-serif; margin: auto; width: 520px;">
+<img src="file://%s/kakawana-about.jpg" width="520px" border="0"/>
+<div style="position: absolute; top:15px; padding-left: 10px; color: #F4ECE3;font-size: 14px; width: 500px;">
+<span style="font-size: 21px; font-weight: bold; color: #F4ECE3;">Kakawana: a better way to get your news.</span><hr>
+(c) 2010: Roberto Alsina <a style="font-size: 14px; color: #F4F4a3; text-decoration: none;" href="mailto:ralsina@netmanagers.com.ar">&lt;ralsina@netmanagers.com.ar&gt;</a></br>
+Website: <a style="font-size: 14px; color: #F4F4a3; text-decoration: none;" href="http://kakawana.googlecode.com">http://kakawana.googlecode.com</a><br>
+<a style="font-size: 14px; color: #F4F4a3; text-decoration: none;" href="http://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;amp;business=Q6R5YDDPM2RL6&amp;amp;lc=AR&amp;amp;item_name=kakawana&amp;amp;item_number=kakawana&amp;amp;currency_code=USD&amp;amp;bn=PP%%2dDonationsBF%%3abtn_donate_LG%%2egif%%3aNonHosted">Donations</a><p>
+Kakawana is free software:<a style="font-size: 14px; color: #F4F4a3; text-decoration: none;" href="http://code.google.com/p/kakawana/wiki/License"> learn more</a>
+</div>
+            '''%tmplDir )
 
     def closeEvent(self, event):
         self.settings.setValue('geometry', self.saveGeometry())
