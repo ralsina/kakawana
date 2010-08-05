@@ -100,10 +100,10 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QToolButton" name="close">
+         <widget class="QToolButton" name="closeSearch">
           <property name="text">
            <string>...</string>
           </property>
@@ -442,5 +442,22 @@
  <resources>
   <include location="icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>text</sender>
+   <signal>editingFinished()</signal>
+   <receiver>go</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>623</x>
+     <y>549</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>774</x>
+     <y>561</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
