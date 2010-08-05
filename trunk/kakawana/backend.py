@@ -264,7 +264,6 @@ class Post(Entity):
             data = data),
             surrogate = False,
             )
-        p.content = p.getContent()
         return p
 
     def createItem(self, fitem):
