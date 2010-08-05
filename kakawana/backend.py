@@ -223,6 +223,7 @@ class Post(Entity):
     _id=Field(Unicode,required=True, primary_key=True)
     feed=ManyToOne("Feed")
     date=Field(DateTime, required=True)
+    content = Field(Unicode, required=False)
 
     @classmethod
     def get_or_create(cls, post):
@@ -257,9 +258,11 @@ class Post(Entity):
             url = post.link,
             _id = _id,
             date = post_date,
+            content = Post.getContent(data),
             data = data),
             surrogate = False,
             )
+        p.content = p.getContent()
         return p
 
     def createItem(self, fitem):
@@ -277,6 +280,25 @@ class Post(Entity):
             pitem.setIcon(0,QtGui.QIcon(':/icons/star2.svg'))
         pitem._id=self._id
         return pitem
+
+    @classmethod
+    def getContent(cls, data):
+        '''find the post contents in a feeedparser entry'''
+        content = ''
+        if 'content' in data:
+            content = '<hr>'.join([c.value for c in data['content']])
+        elif 'summary' in data:
+            content = data['summary']
+        elif 'value' in data:
+            content = data['value']
+        else:
+            print "Can't find content in this entry"
+            print data
+
+        # Rudimentary NON-html detection
+        if not '<' in content:
+            content=escape(content).replace('\n\n', '<p>')
+        return content
         
     def __repr__(self):
         return "Post: %s"%self.title
