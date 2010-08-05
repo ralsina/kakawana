@@ -385,7 +385,7 @@ class Main(QtGui.QMainWindow):
                 # It's not the current item, just show the item count
                 
                 # This is the one to update
-                unread_count = len(filter(lambda p: not p.read, feed.posts))
+                unread_count = min(100,len(filter(lambda p: not p.read, feed.posts)))
                 fitem.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
                 if unread_count:
                     fitem.setBackground(0, QtGui.QBrush(QtGui.QColor("lightgreen")))
@@ -450,7 +450,7 @@ class Main(QtGui.QMainWindow):
             i+=1
             if  i%5==0:
                 QtCore.QCoreApplication.instance().processEvents()
-            unread_count = backend.Post.query.filter_by(feed=feed, read=False).count()
+            unread_count = min(100,backend.Post.query.filter_by(feed=feed, read=False).count())
             tt=backend.h2t(feed.name)
             tt2='A%04s'%(len(feeds)-i)
             fitem=QtGui.QTreeWidgetItem(['','%s (%d)'%(tt,unread_count),tt2])
@@ -621,13 +621,17 @@ class Main(QtGui.QMainWindow):
         '''Given a feed and an item, it shows the feed's posts as
         children of the item, and updates what the feed item shows'''
         if feed:
-            unread_count = len(filter(lambda p: not p.read, feed.posts))
+            unread_count = min(len(filter(lambda p: not p.read, feed.posts)), 100)
             item.setText(1,backend.h2t('%s (%d)'%(feed.name,unread_count)))
 
             items = {}
             for i in range(item.childCount()):
                 items[item.child(i)._id]=item
-            for i,post in enumerate(feed.posts[:100]):
+            if self.showAllPosts:
+                postList = feed.posts[:100]
+            else:
+                postList = backend.Post.query.filter_by(feed = feed, read=False).order_by(-backend.Post.date).limit(100).all()
+            for i,post in enumerate(postList):
                 if i%10==0:
                     QtCore.QCoreApplication.instance().processEvents()
                 if post.read == False or self.showAllPosts:
