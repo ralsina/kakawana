@@ -142,6 +142,11 @@ class Main(QtGui.QMainWindow):
         self.addAction(self.ui.actionPrevious)
         self.addAction(self.ui.actionStar)
 
+        # Zoom actions
+        self.ui.actionLarger.triggered.connect(lambda: self.ui.html.setZoomFactor(self.ui.html.zoomFactor()+.2))
+        self.ui.actionSmaller.triggered.connect(lambda: self.ui.html.setZoomFactor(self.ui.html.zoomFactor()-.2))
+        self.ui.actionNormal.triggered.connect(lambda: self.ui.html.setZoomFactor(1))
+
         self.ui.html.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateExternalLinks)
         self.ui.html.page().linkClicked.connect(self.linkClicked)
 
