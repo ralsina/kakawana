@@ -544,6 +544,7 @@ class Main(QtGui.QMainWindow):
                 enclosure.hide()
                 enclosure.deleteLater()
             self.enclosures=[]
+            resize = False
             for e in data.enclosures:
                 # FIXME: add generic 'download' enclosure widget
                 cls = None
@@ -552,6 +553,7 @@ class Main(QtGui.QMainWindow):
                         cls = AudioPlayer
                     elif e.type.startswith('video'):
                         cls = VideoPlayer
+                        resize = True
                     if cls:
                         player = cls(e.href,
                             self.enclosureContainer)
@@ -560,6 +562,8 @@ class Main(QtGui.QMainWindow):
                         self.enclosureLayout.addWidget(player)
             if self.enclosures:
                 self.enclosureContainer.show()
+                if resize:
+                    self.enclosureContainer.setGeometry(0,0,self.width(), 200)
             else:
                 self.enclosureContainer.hide()
             
