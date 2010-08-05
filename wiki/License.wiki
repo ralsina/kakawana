@@ -1,6 +1,5 @@
-#Explanation of the license
+ =The License=
 
-= Introduction =
 
 Kakawana is free software. That means you can do almost anything with it.
 If you want the legal explanation of what that mean, you can see it [http://www.gnu.org/licenses/gpl-2.0.html here] but this page is to explain
