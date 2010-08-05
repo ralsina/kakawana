@@ -141,6 +141,9 @@ class Main(QtGui.QMainWindow):
         self.addAction(self.ui.actionNext)
         self.addAction(self.ui.actionPrevious)
         self.addAction(self.ui.actionStar)
+        self.addAction(self.ui.actionFind)
+        self.ui.searchWidget.hide()
+        self.ui.actionFind.triggered.connect(self.ui.searchWidget.show)
 
         # Zoom actions
         self.ui.actionLarger.triggered.connect(lambda: self.ui.html.setZoomFactor(self.ui.html.zoomFactor()+.2))
