@@ -13,6 +13,8 @@ import datetime, time
 # Import Qt modules
 from PyQt4 import QtCore, QtGui, QtWebKit
 import icons_rc
+import tenjin
+escape = tenjin.helpers.escape
 
 feedparser.USER_AGENT = 'Kakawana/%s +http://kakawana.googlecode.com/'%VERSION
 
