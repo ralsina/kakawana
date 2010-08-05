@@ -260,7 +260,7 @@ class Post(Entity):
             url = post.link,
             _id = _id,
             date = post_date,
-            content = Post.getContent(data),
+            content = Post.getContent(post),
             data = data),
             surrogate = False,
             )
