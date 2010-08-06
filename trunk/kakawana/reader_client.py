@@ -13,7 +13,10 @@ Klient Google Readera
 import urllib
 import urllib2
 import re
-import simplejson
+try:
+        import simplejson as json
+except ImportError:
+        import json
 import time
 from lxml import etree, objectify
 
