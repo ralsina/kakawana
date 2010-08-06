@@ -24,7 +24,10 @@ import urlparse
 import time
 
 import xml.dom.minidom
-import simplejson as json
+try:
+	import simplejson as json
+except ImportError:
+	import json
 import oauth2 as oauth
 
 #Reset due to ascii/utf-8 problems with internet data
