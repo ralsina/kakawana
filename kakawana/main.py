@@ -507,25 +507,25 @@ class Main(QtGui.QMainWindow):
             elif self.mode == 2:
                 # Feed mode
 
-                content = ''
-                if 'content' in data:
-                    content = '<hr>'.join([c.value for c in data['content']])
-                elif 'summary' in data:
-                    content = data['summary']
-                elif 'value' in data:
-                    content = data['value']
-                else:
-                    print "Can't find content in this entry"
-                    print data
+                #content = ''
+                #if 'content' in data:
+                    #content = '<hr>'.join([c.value for c in data['content']])
+                #elif 'summary' in data:
+                    #content = data['summary']
+                #elif 'value' in data:
+                    #content = data['value']
+                #else:
+                    #print "Can't find content in this entry"
+                    #print data
 
-                # Rudimentary NON-html detection
-                if not '<' in content:
-                    content=escape(content).replace('\n\n', '<p>')
+                ## Rudimentary NON-html detection
+                #if not '<' in content:
+                    #content=escape(content).replace('\n\n', '<p>')
                 
                 self.ui.html.setHtml(renderTemplate('post.tmpl',
                     post = p,
                     data = data,
-                    content = content,
+                    content = p.content,
                     cssdir = tmplDir,
                     escapedposturl=cgi.escape(p.url),
                     escapedposttitle=cgi.escape(p.title),
@@ -554,7 +554,8 @@ class Main(QtGui.QMainWindow):
                 if hasattr(e,'type'):
                     if e.type.startswith('audio'):
                         cls = AudioPlayer
-                    elif e.type.startswith('video'):
+                    elif e.type.startswith('video') or \
+                        e.href.split('.')[-1] in ['ogv','m4v','avi','mp4']:
                         cls = VideoPlayer
                         resize = True
                     if cls:
