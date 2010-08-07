@@ -594,6 +594,7 @@ class Main(QtGui.QMainWindow):
             # Update unread count
             self.updateFeed(p.feed.xmlurl)
         else: # Feed
+            self.enclosureContainer.hide()
             self.updateCurrentFeed()
             feed=backend.Feed.get_by(xmlurl=item._id)
             if feed:
