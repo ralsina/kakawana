@@ -967,9 +967,41 @@ class Main(QtGui.QMainWindow):
     def on_actionKeep_Google_Synced_toggled(self, b):
         self.keepGoogleSynced = b
 
+    def expirePosts(self):
+        print 'Expiring posts'
+        print 'Before:', backend.Post.query.count()
+        feedcount = backend.Feed.query.count()
+        progress = QtGui.QProgressDialog(self)
+        progress.setLabelText(self.tr('Deleting old posts'))
+        progress.show()
+        progress.setAutoClose(True)
+        QtCore.QCoreApplication.processEvents()
+
+        progress.setMaximum(feedcount)
+        flag = True
+        for i,f in enumerate(backend.Feed.query):
+            print 'Expiring: ', f.xmlurl
+            progress.setValue(i)
+            QtCore.QCoreApplication.processEvents()
+            if progress.wasCanceled():
+                flag = False
+                break
+            f.expire()
+        print 'After:', backend.Post.query.count()
+        if flag:
+            self.settings.setValue('lastexpiration',QtCore.QDateTime.currentDateTime())
+    
     def on_actionQuit_activated(self, b=None):
         if b is not None: return
         self.close()
+        now = QtCore.QDateTime.currentDateTime()
+
+        lastExpiration = self.settings.value("lastexpiration",
+            QtCore.QVariant(now)).toDateTime()
+        print 'Last expired:', lastExpiration
+        if lastExpiration.daysTo(now) > 3:
+            self.expirePosts()
+        
         QtCore.QCoreApplication.instance().quit()
 
     def on_actionAbout_Kakawana_activated(self, b=None):
