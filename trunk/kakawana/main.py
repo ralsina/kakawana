@@ -416,6 +416,7 @@ class Main(QtGui.QMainWindow):
         '''
         scrollTo = None
         feeds=backend.Feed.query.order_by('name').all()
+        feeds.sort(cmp=lambda x,y: -cmp(x.name.lower(),y.name.lower()))
         self.ui.feeds.clear()
         self.feed_icon = QtGui.QIcon(':/icons/feed.svg')
         self.warning_icon = QtGui.QIcon(':/icons/warning.svg')
@@ -455,7 +456,7 @@ class Main(QtGui.QMainWindow):
                 QtCore.QCoreApplication.instance().processEvents()
             unread_count = min(100,backend.Post.query.filter_by(feed=feed, read=False).count())
             tt=backend.h2t(feed.name)
-            tt2='A%04s'%(len(feeds)-i)
+            tt2='A%09d'%(i)
             fitem=QtGui.QTreeWidgetItem(['','%s (%d)'%(tt,unread_count),tt2])
             if feed.bad_check_count > 5:
                 fitem.setIcon(0,self.error_icon)
