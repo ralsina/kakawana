@@ -163,6 +163,8 @@ class Main(QtGui.QMainWindow):
         self.modes.currentIndexChanged.connect(self.modeChange)
         self.ui.statusbar.addWidget(QtGui.QLabel('View mode:'))
         self.ui.statusbar.addWidget(self.modes)
+	self.showStatusBar = True
+        self.ui.actionShow_Status_Bar.setChecked(self.showStatusBar)
 
         self.fetcher = Process(target=fetcher)
         self.fetcher.daemon = True
@@ -177,6 +179,11 @@ class Main(QtGui.QMainWindow):
         self.scheduled_updates.start(30000)
 
         self.googleList=[]
+
+    def on_actionShow_Status_Bar_toggled(self, checked):
+        '''Show/Hide status bar'''
+        self.ui.statusbar.setVisible(checked)
+	self.showStatusBar = checked
 
     def on_actionSync_Read_Items_activated(self, b=None):
         '''Fetches the readingList from google and marks all known
