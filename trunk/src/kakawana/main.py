@@ -11,8 +11,8 @@ from PyQt4 import QtCore, QtGui, QtWebKit, uic
 # Import our backend
 import backend
 
-import feedfinder
-import feedparser
+import kakawana.feedfinder as feedfinder
+import kakawana.feedparser as feedparser
 import pickle
 import datetime
 import time
@@ -549,7 +549,7 @@ class Main(QtGui.QMainWindow):
                 enclosure.deleteLater()
             self.enclosures=[]
             resize = False
-            for e in data.enclosures:
+            for e in data.get('enclosures',[]):
                 # FIXME: add generic 'download' enclosure widget
                 cls = None
                 if hasattr(e,'type'):
