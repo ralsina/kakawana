@@ -153,6 +153,13 @@ class Main(QtGui.QMainWindow):
         self.ui.html.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateExternalLinks)
         self.ui.html.page().linkClicked.connect(self.linkClicked)
         self.ui.html.page().linkHovered.connect(self.showTempStatus)
+        self.progressBar=QtGui.QProgressBar()
+        self.progressBar.setMaximum(100)
+        self.progressBar.setMaximumWidth(150)
+        self.statusbar.addPermanentWidget(self.progressBar, False)
+        self.ui.html.page().loadProgress.connect(self.progressBar.setValue)
+        self.ui.html.page().loadStarted.connect(self.progressBar.show)
+        self.ui.html.page().loadFinished.connect(self.progressBar.hide)
 
 
         # Show about kakawana on startup
