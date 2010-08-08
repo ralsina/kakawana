@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 import sys, os
 
@@ -12,6 +13,11 @@ install_requires = [
     # List your project dependencies here.
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
+    "Elixir >=0.6",
+    "BeautifulSoup",
+    "Keyring",
+    "oauth2",
+    "lxml",
 ]
 
 
