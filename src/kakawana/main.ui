@@ -179,7 +179,7 @@
      <x>0</x>
      <y>0</y>
      <width>788</width>
-     <height>24</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -233,6 +233,8 @@
     <addaction name="actionLarger"/>
     <addaction name="actionNormal"/>
     <addaction name="actionSmaller"/>
+    <addaction name="separator"/>
+    <addaction name="actionShow_Status_Bar"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuView"/>
@@ -449,6 +451,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionShow_Status_Bar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Status Bar</string>
    </property>
   </action>
  </widget>
