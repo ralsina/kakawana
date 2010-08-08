@@ -152,18 +152,15 @@ class Main(QtGui.QMainWindow):
 
         self.ui.html.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateExternalLinks)
         self.ui.html.page().linkClicked.connect(self.linkClicked)
+        self.ui.html.page().linkHovered.connect(self.showTempStatus)
+
 
         # Show about kakawana on startup
         self.on_actionAbout_Kakawana_activated()
-        
+
         self.loadFeeds(-1)
 
-        self.modes=QtGui.QComboBox()
-        self.modes.addItems(["Feed Decides", "Site", "Feed", "Fast Site", "Fast Feed"])
-        self.modes.currentIndexChanged.connect(self.modeChange)
-        self.ui.statusbar.addWidget(QtGui.QLabel('View mode:'))
-        self.ui.statusbar.addWidget(self.modes)
-	self.showStatusBar = True
+        self.showStatusBar = True
         self.ui.actionShow_Status_Bar.setChecked(self.showStatusBar)
 
         self.fetcher = Process(target=fetcher)
@@ -179,6 +176,9 @@ class Main(QtGui.QMainWindow):
         self.scheduled_updates.start(30000)
 
         self.googleList=[]
+
+    def showTempStatus(self, msg, *args):
+        self.statusbar.showMessage(msg, 5000)
 
     def on_actionShow_Status_Bar_toggled(self, checked):
         '''Show/Hide status bar'''
