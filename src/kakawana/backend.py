@@ -7,7 +7,7 @@ import os
 import re
 import time
 from elixir import *
-import feedparser
+import kakawana.feedparser as feedparser
 import pickle, base64
 import datetime, time
 # Import Qt modules

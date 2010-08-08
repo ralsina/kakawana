@@ -35,7 +35,7 @@ Posted at #{utc2local(post.date)}
 <div style='margin-top: 1em;'>
 #{content}
 <p>
-<?py if data: ?>
+<?py if data and 'enclosures' in data: ?>
   <?py for enclosure in  data.enclosures: ?>
     <?py if hasattr(enclosure, 'type'): ?>
         <?py if enclosure.type.startswith('audio'): ?>
