@@ -39,6 +39,6 @@ setup(name='kakawana',
     install_requires=install_requires,
     entry_points={
         'console_scripts':
-            ['kakawana=kakawana:main']
+            ['kakawana=kakawana.main:main']
     }
 )
